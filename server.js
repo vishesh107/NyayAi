@@ -37,6 +37,7 @@ const allowedOrigins = [
   'http://127.0.0.1:3000',
   'http://127.0.0.1:5500',
   'http://localhost:5173',
+  'https://nyayai-production.up.railway.app',
 ];
 
 // Also allow any extra origins defined in .env (comma-separated)
