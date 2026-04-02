@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NyayAI — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0f0e0d; --paper: #faf8f5; --cream: #f2ede6;
+  --gold: #c9963a; --gold-light: #f0d99a; --gold-dark: #8a6320;
+  --teal: #1a6b5c; --teal-light: #e6f4f1;
+  --red: #c0392b; --red-light: #fdecea;
+  --green: #1e7e34; --green-light: #e8f5e9;
+  --border: #e2ddd6; --muted: #7a756e;
+  --blue: #1a5276; --blue-light: #eaf2fb;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; }
+
+/* NAV */
+.nav { background: var(--ink); padding: 0 32px; height: 58px; display: flex; align-items: center; justify-content: space-between; }
+.nav-logo { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--gold); }
+.nav-logo span { color: white; font-weight: 400; }
+.nav-right { display: flex; align-items: center; gap: 14px; }
+.nav-user { font-size: 13px; color: rgba(255,255,255,0.6); }
+.btn-logout { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: white; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-family: 'DM Sans', sans-serif; }
+.btn-logout:hover { background: rgba(255,255,255,0.1); }
+
+/* LAYOUT */
+.container { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+.page-title { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--ink); margin-bottom: 4px; }
+.page-sub { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+
+/* STATS ROW */
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 28px; }
+.stat-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
+.stat-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 6px; }
+.stat-val { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--ink); }
+.stat-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+/* GRID */
+.main-grid { display: grid; grid-template-columns: 380px 1fr; gap: 20px; align-items: start; }
+@media(max-width: 800px) { .main-grid { grid-template-columns: 1fr; } }
+
+/* CARDS */
+.card { background: white; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.card-header { padding: 18px 22px 14px; border-bottom: 1px solid var(--border); }
+.card-header h2 { font-size: 16px; font-weight: 600; color: var(--ink); margin-bottom: 3px; }
+.card-header p { font-size: 13px; color: var(--muted); }
+.card-body { padding: 20px 22px; }
+
+/* FORM */
+.form-group { margin-bottom: 16px; }
+.form-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin-bottom: 6px; display: block; }
+.form-label .req { color: var(--red); }
+.form-input, .form-select, .form-textarea {
+  width: 100%; padding: 10px 13px; border: 1px solid var(--border);
+  border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px;
+  color: var(--ink); background: var(--paper); outline: none;
+  transition: border-color 0.2s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--gold); }
+.form-textarea { resize: vertical; min-height: 72px; }
+
+/* FILE DROP */
+.file-drop {
+  border: 2px dashed var(--border); border-radius: 10px; padding: 28px 20px;
+  text-align: center; cursor: pointer; transition: all 0.2s; background: var(--paper);
+}
+.file-drop:hover, .file-drop.dragover { border-color: var(--gold); background: #FFFBF0; }
+.file-drop-icon { font-size: 32px; margin-bottom: 10px; }
+.file-drop p { font-size: 13px; color: var(--muted); }
+.file-drop strong { color: var(--ink); }
+.file-name-display { margin-top: 10px; font-size: 13px; font-weight: 500; color: var(--teal); background: var(--teal-light); padding: 6px 12px; border-radius: 6px; display: none; }
+
+/* PROGRESS */
+.progress-wrap { display: none; margin-top: 14px; }
+.progress-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; display: flex; justify-content: space-between; }
+.progress-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--gold); border-radius: 3px; transition: width 0.3s; width: 0%; }
+
+/* BUTTONS */
+.btn-primary {
+  width: 100%; padding: 12px; background: var(--ink); color: white;
+  border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif;
+  font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s;
+}
+.btn-primary:hover { background: #2a2825; }
+.btn-primary:disabled { background: var(--muted); cursor: not-allowed; }
+
+/* DOCS LIST */
+.filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.filter-btn { padding: 6px 14px; border: 1px solid var(--border); border-radius: 20px; background: white; font-size: 12px; font-weight: 500; color: var(--muted); cursor: pointer; transition: all 0.15s; font-family: 'DM Sans', sans-serif; }
+.filter-btn:hover, .filter-btn.active { background: var(--ink); color: white; border-color: var(--ink); }
+
+.doc-item { border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; background: white; display: flex; gap: 12px; align-items: flex-start; transition: box-shadow 0.15s; }
+.doc-item:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+.doc-item.inactive { opacity: 0.5; }
+.doc-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+.doc-info { flex: 1; min-width: 0; }
+.doc-title { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.doc-meta { font-size: 12px; color: var(--muted); display: flex; gap: 10px; flex-wrap: wrap; }
+.doc-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.btn-sm { padding: 5px 11px; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; border: 1px solid var(--border); background: white; color: var(--muted); transition: all 0.15s; }
+.btn-sm:hover { background: var(--cream); }
+.btn-sm.danger { border-color: var(--red); color: var(--red); }
+.btn-sm.danger:hover { background: var(--red-light); }
+.btn-sm.enable { border-color: var(--teal); color: var(--teal); }
+.btn-sm.enable:hover { background: var(--teal-light); }
+
+.cat-badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
+
+/* TOAST */
+.toast { position: fixed; bottom: 24px; right: 24px; padding: 12px 20px; border-radius: 10px; font-size: 14px; z-index: 9999; display: flex; align-items: center; gap: 10px; transform: translateY(60px); opacity: 0; transition: all 0.3s; pointer-events: none; }
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { background: var(--ink); color: white; border-left: 4px solid var(--teal); }
+.toast.error   { background: var(--ink); color: white; border-left: 4px solid var(--red); }
+
+/* LOGIN */
+.login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--ink); }
+.login-card { background: white; border-radius: 18px; width: 380px; overflow: hidden; }
+.login-header { background: var(--ink); padding: 28px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.login-logo { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--gold); margin-bottom: 4px; }
+.login-sub { font-size: 13px; color: rgba(255,255,255,0.5); }
+.login-body { padding: 28px; }
+.login-note { font-size: 12px; color: var(--muted); text-align: center; margin-top: 12px; }
+
+.empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
+.empty-state .e-icon { font-size: 36px; margin-bottom: 10px; }
+.empty-state p { font-size: 14px; }
+
+.chunk-count { background: var(--blue-light); color: var(--blue); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN (shown when not authenticated) -->
+<div id="login-page" class="login-wrap">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="login-logo">NyayAI <span style="color:white;font-weight:400;">Admin</span></div>
+      <div class="login-sub">Document management panel</div>
+    </div>
+    <div class="login-body">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" id="login-email" placeholder="admin@example.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" id="login-pass" placeholder="Your password" onkeydown="if(event.key==='Enter')doLogin()" />
+      </div>
+      <button class="btn-primary" onclick="doLogin()" id="login-btn">Sign in to admin panel</button>
+      <div class="login-note">Only accounts listed in ADMIN_EMAILS can access this panel</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN ADMIN PANEL -->
+<div id="admin-page" style="display:none;">
+  <nav class="nav">
+    <div class="nav-logo">NyayAI <span>Admin</span></div>
+    <div class="nav-right">
+      <span class="nav-user" id="nav-user-email"></span>
+      <button class="btn-logout" onclick="doLogout()">Sign out</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-title">Document Manager</div>
+    <div class="page-sub">Upload PDFs to power the RAG pipeline — bots will use these as verified sources</div>
+
+    <!-- Stats -->
+    <div class="stats-row" id="stats-row">
+      <div class="stat-card"><div class="stat-label">Total documents</div><div class="stat-val" id="stat-docs">—</div></div>
+      <div class="stat-card"><div class="stat-label">Total chunks</div><div class="stat-val" id="stat-chunks">—</div></div>
+      <div class="stat-card"><div class="stat-label">RAG queries</div><div class="stat-val" id="stat-queries">—</div></div>
+      <div class="stat-card"><div class="stat-label">Hit rate</div><div class="stat-val" id="stat-hits">—</div></div>
+    </div>
+
+    <div class="main-grid">
+
+      <!-- LEFT: Upload form -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Upload new document</h2>
+          <p>PDF only · max 20MB</p>
+        </div>
+        <div class="card-body">
+
+          <!-- PDF drop zone -->
+          <div class="form-group">
+            <label class="form-label">PDF file <span class="req">*</span></label>
+            <div class="file-drop" id="file-drop" onclick="document.getElementById('pdf-input').click()">
+              <div class="file-drop-icon">📄</div>
+              <p><strong>Click to choose</strong> or drag & drop a PDF here</p>
+              <p style="margin-top:4px;font-size:12px;">Budget circulars, RERA orders, EPFO notifications, ITR guidelines...</p>
+            </div>
+            <input type="file" id="pdf-input" accept="application/pdf" style="display:none" onchange="onFileSelected(this)" />
+            <div class="file-name-display" id="file-name-display"></div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Document title <span class="req">*</span></label>
+            <input class="form-input" type="text" id="doc-title" placeholder="e.g. Union Budget 2024 — Income Tax Changes" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Bot category <span class="req">*</span></label>
+            <select class="form-select" id="doc-catkey">
+              <option value="">Select which bot this belongs to</option>
+              <option value="labour">⚖️ Indian Labour Law</option>
+              <option value="tenant">🏠 Tenant Rights</option>
+              <option value="itr">📋 ITR Filing Guide</option>
+              <option value="freelancer">💼 Freelancer Tax</option>
+              <option value="regime">📊 New vs Old Regime</option>
+              <option value="fir">🚔 Police FIR & Legal Rights</option>
+              <option value="rera">🏗️ Consumer Rights & RERA</option>
+              <option value="startup">🚀 Startup Legal</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Description <span style="color:var(--muted);font-weight:400;">(optional)</span></label>
+            <textarea class="form-textarea" id="doc-description" placeholder="Brief description of what this document covers..."></textarea>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="form-group">
+              <label class="form-label">Effective date</label>
+              <input class="form-input" type="date" id="doc-date" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Official source URL</label>
+              <input class="form-input" type="url" id="doc-url" placeholder="https://incometax.gov.in/..." />
+            </div>
+          </div>
+
+          <!-- Progress -->
+          <div class="progress-wrap" id="progress-wrap">
+            <div class="progress-label">
+              <span id="progress-text">Processing...</span>
+              <span id="progress-pct">0%</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+          </div>
+
+          <button class="btn-primary" id="upload-btn" onclick="uploadDocument()" style="margin-top:6px;">
+            Upload & ingest document
+          </button>
+
+        </div>
+      </div>
+
+      <!-- RIGHT: Documents list -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Uploaded documents</h2>
+          <p>Click a bot filter to see its documents</p>
+        </div>
+        <div class="card-body">
+          <div class="filter-row" id="filter-row">
+            <button class="filter-btn active" onclick="filterDocs('all', this)">All</button>
+            <button class="filter-btn" onclick="filterDocs('labour', this)">⚖️ Labour</button>
+            <button class="filter-btn" onclick="filterDocs('tenant', this)">🏠 Tenant</button>
+            <button class="filter-btn" onclick="filterDocs('itr', this)">📋 ITR</button>
+            <button class="filter-btn" onclick="filterDocs('freelancer', this)">💼 Freelancer</button>
+            <button class="filter-btn" onclick="filterDocs('regime', this)">📊 Regime</button>
+            <button class="filter-btn" onclick="filterDocs('fir', this)">🚔 FIR</button>
+            <button class="filter-btn" onclick="filterDocs('rera', this)">🏗️ RERA</button>
+            <button class="filter-btn" onclick="filterDocs('startup', this)">🚀 Startup</button>
+          </div>
+          <div id="docs-list"><div class="empty-state"><div class="e-icon">📂</div><p>Loading documents...</p></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:3000/api'
+  : '/api';
+
+let token      = localStorage.getItem('nyay_token');
+let allDocs    = [];
+let currentFilter = 'all';
+let selectedFile = null;
+
+const CAT_COLORS = {
+  labour:'#FEF7E0', tenant:'#E6F4F1', itr:'#EFF6FF', freelancer:'#F0FDF4',
+  regime:'#FDF4FF', fir:'#FEF2F2', rera:'#FFFBEB', startup:'#EDE9FE',
+};
+const CAT_ICONS = {
+  labour:'⚖️', tenant:'🏠', itr:'📋', freelancer:'💼',
+  regime:'📊', fir:'🚔', rera:'🏗️', startup:'🚀',
+};
+
+// ── INIT ─────────────────────────────────────────────────────
+window.addEventListener('load', async () => {
+  if (token) {
+    const ok = await verifyAdmin();
+    if (ok) { showAdmin(); loadAll(); }
+    else { localStorage.removeItem('nyay_token'); token = null; showLogin(); }
+  } else {
+    showLogin();
+  }
+});
+
+async function verifyAdmin() {
+  try {
+    const res = await fetch(`${API}/auth/me`, { headers: { Authorization: `Bearer ${token}` } });
+    if (!res.ok) return false;
+    const d = await res.json();
+    document.getElementById('nav-user-email').textContent = d.user.email;
+    return true;
+  } catch { return false; }
+}
+
+function showLogin()  { document.getElementById('login-page').style.display = 'flex'; document.getElementById('admin-page').style.display = 'none'; }
+function showAdmin()  { document.getElementById('login-page').style.display = 'none'; document.getElementById('admin-page').style.display = 'block'; }
+
+// ── AUTH ─────────────────────────────────────────────────────
+async function doLogin() {
+  const identifier = document.getElementById('login-email').value.trim();
+  const password   = document.getElementById('login-pass').value;
+  if (!identifier || !password) { showToast('Enter email and password', 'error'); return; }
+
+  const btn = document.getElementById('login-btn');
+  btn.textContent = 'Signing in...'; btn.disabled = true;
+
+  try {
+    const res  = await fetch(`${API}/auth/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ identifier, password }) });
+    const data = await res.json();
+    if (!res.ok) { showToast(data.error || 'Login failed', 'error'); return; }
+
+    token = data.token;
+    localStorage.setItem('nyay_token', token);
+    document.getElementById('nav-user-email').textContent = data.user.email;
+    showAdmin();
+    loadAll();
+    showToast(`Welcome back, ${data.user.name.split(' ')[0]}!`, 'success');
+  } catch (err) {
+    showToast('Connection failed — is the server running?', 'error');
+  } finally {
+    btn.textContent = 'Sign in to admin panel'; btn.disabled = false;
+  }
+}
+
+function doLogout() {
+  localStorage.removeItem('nyay_token');
+  token = null;
+  showLogin();
+}
+
+// ── FILE HANDLING ─────────────────────────────────────────────
+const dropZone = document.getElementById('file-drop');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type === 'application/pdf') setFile(file);
+  else showToast('Only PDF files are accepted', 'error');
+});
+
+function onFileSelected(input) {
+  if (input.files[0]) setFile(input.files[0]);
+}
+
+function setFile(file) {
+  selectedFile = file;
+  const disp = document.getElementById('file-name-display');
+  disp.textContent = `📄 ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+  disp.style.display = 'block';
+}
+
+// ── UPLOAD ────────────────────────────────────────────────────
+async function uploadDocument() {
+  if (!selectedFile) { showToast('Please select a PDF file', 'error'); return; }
+
+  const title   = document.getElementById('doc-title').value.trim();
+  const catKey  = document.getElementById('doc-catkey').value;
+  const desc    = document.getElementById('doc-description').value.trim();
+  const date    = document.getElementById('doc-date').value;
+  const url     = document.getElementById('doc-url').value.trim();
+
+  if (!title)  { showToast('Document title is required', 'error'); return; }
+  if (!catKey) { showToast('Please select a bot category', 'error'); return; }
+
+  const btn = document.getElementById('upload-btn');
+  btn.disabled = true; btn.textContent = 'Uploading...';
+  setProgress(true, 'Uploading PDF...', 20);
+
+  try {
+    const form = new FormData();
+    form.append('pdf',           selectedFile);
+    form.append('title',         title);
+    form.append('catKey',        catKey);
+    if (desc) form.append('description',   desc);
+    if (date) form.append('effectiveDate', date);
+    if (url)  form.append('sourceUrl',     url);
+
+    setProgress(true, 'Extracting text from PDF...', 45);
+
+    const res  = await fetch(`${API}/documents/upload`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: form,
+    });
+
+    setProgress(true, 'Creating embeddings & storing...', 75);
+    const data = await res.json();
+
+    if (!res.ok) {
+      showToast(data.error || 'Upload failed', 'error');
+      setProgress(false);
+      return;
+    }
+
+    setProgress(true, 'Done!', 100);
+    await new Promise(r => setTimeout(r, 500));
+    setProgress(false);
+
+    showToast(`✓ "${title}" ingested — ${data.chunks} chunks created`, 'success');
+    resetForm();
+    loadAll();
+  } catch (err) {
+    showToast('Upload failed — check server connection', 'error');
+    setProgress(false);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Upload & ingest document';
+  }
+}
+
+function setProgress(show, text = '', pct = 0) {
+  const wrap = document.getElementById('progress-wrap');
+  wrap.style.display = show ? 'block' : 'none';
+  if (show) {
+    document.getElementById('progress-text').textContent = text;
+    document.getElementById('progress-pct').textContent  = pct + '%';
+    document.getElementById('progress-fill').style.width = pct + '%';
+  }
+}
+
+function resetForm() {
+  selectedFile = null;
+  document.getElementById('pdf-input').value = '';
+  document.getElementById('file-name-display').style.display = 'none';
+  document.getElementById('doc-title').value = '';
+  document.getElementById('doc-catkey').value = '';
+  document.getElementById('doc-description').value = '';
+  document.getElementById('doc-date').value = '';
+  document.getElementById('doc-url').value = '';
+}
+
+// ── LOAD DATA ─────────────────────────────────────────────────
+async function loadAll() {
+  await Promise.all([loadDocs(), loadStats()]);
+}
+
+async function loadDocs() {
+  try {
+    const res  = await fetch(`${API}/documents`, { headers: { Authorization: `Bearer ${token}` } });
+    const data = await res.json();
+    if (!res.ok) { showToast(data.error || 'Failed to load documents', 'error'); return; }
+    allDocs = data.documents || [];
+    renderDocs();
+  } catch {
+    showToast('Failed to load documents', 'error');
+  }
+}
+
+async function loadStats() {
+  try {
+    const res  = await fetch(`${API}/documents/stats`, { headers: { Authorization: `Bearer ${token}` } });
+    const data = await res.json();
+    if (!res.ok) return;
+
+    const stats = data.stats || {};
+    let totalDocs = 0, totalChunks = 0, totalQueries = 0, totalHits = 0;
+    Object.values(stats).forEach(s => {
+      totalDocs    += s.docs    || 0;
+      totalChunks  += s.chunks  || 0;
+      totalQueries += s.queries || 0;
+      totalHits    += s.hits    || 0;
+    });
+
+    document.getElementById('stat-docs').textContent    = totalDocs;
+    document.getElementById('stat-chunks').textContent  = totalChunks.toLocaleString();
+    document.getElementById('stat-queries').textContent = totalQueries.toLocaleString();
+    document.getElementById('stat-hits').textContent    = totalQueries > 0
+      ? Math.round(totalHits / totalQueries * 100) + '%'
+      : '—';
+  } catch {}
+}
+
+// ── RENDER DOCS ───────────────────────────────────────────────
+function filterDocs(cat, btn) {
+  currentFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderDocs();
+}
+
+function renderDocs() {
+  const list    = document.getElementById('docs-list');
+  const filtered = currentFilter === 'all' ? allDocs : allDocs.filter(d => d.cat_key === currentFilter);
+
+  if (filtered.length === 0) {
+    list.innerHTML = `<div class="empty-state"><div class="e-icon">📂</div><p>No documents uploaded yet for this category.<br>Upload your first PDF using the form on the left.</p></div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(doc => {
+    const icon     = CAT_ICONS[doc.cat_key]  || '📄';
+    const bg       = CAT_COLORS[doc.cat_key] || '#f5f5f5';
+    const dateStr  = doc.effective_date ? new Date(doc.effective_date).toLocaleDateString('en-IN') : null;
+    const sizeStr  = doc.file_size ? (doc.file_size / 1024 / 1024).toFixed(2) + ' MB' : '';
+    const inactive = !doc.is_active ? ' inactive' : '';
+
+    return `
+    <div class="doc-item${inactive}" id="doc-${doc.id}">
+      <div style="font-size:24px;margin-top:2px;">${icon}</div>
+      <div class="doc-info">
+        <div class="doc-title" title="${doc.title}">${doc.title}</div>
+        <div class="doc-meta">
+          <span style="background:${bg};padding:1px 7px;border-radius:20px;font-size:11px;font-weight:600;">${doc.cat_key}</span>
+          ${dateStr ? `<span>📅 ${dateStr}</span>` : ''}
+          ${sizeStr ? `<span>${sizeStr}</span>` : ''}
+          <span style="color:${doc.is_active ? '#1e7e34' : '#c0392b'};">${doc.is_active ? '● Active' : '○ Disabled'}</span>
+          ${doc.source_url ? `<a href="${doc.source_url}" target="_blank" style="color:#1a5276;text-decoration:none;">🔗 Source</a>` : ''}
+        </div>
+        ${doc.description ? `<div style="font-size:12px;color:var(--muted);margin-top:4px;">${doc.description}</div>` : ''}
+      </div>
+      <div class="doc-actions">
+        <button class="btn-sm ${doc.is_active ? '' : 'enable'}" onclick="toggleDoc('${doc.id}', ${!doc.is_active})">
+          ${doc.is_active ? 'Disable' : 'Enable'}
+        </button>
+        <button class="btn-sm danger" onclick="deleteDoc('${doc.id}', '${doc.title.replace(/'/g,"\\'")}')">Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── DOCUMENT ACTIONS ──────────────────────────────────────────
+async function toggleDoc(id, makeActive) {
+  try {
+    const res = await fetch(`${API}/documents/${id}/toggle`, {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ isActive: makeActive }),
+    });
+    if (res.ok) {
+      showToast(`Document ${makeActive ? 'enabled' : 'disabled'}`, 'success');
+      loadAll();
+    }
+  } catch { showToast('Action failed', 'error'); }
+}
+
+async function deleteDoc(id, title) {
+  if (!confirm(`Delete "${title}"?\n\nThis will also delete all its text chunks. This cannot be undone.`)) return;
+  try {
+    const res = await fetch(`${API}/documents/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (res.ok) {
+      showToast('Document deleted', 'success');
+      loadAll();
+    }
+  } catch { showToast('Delete failed', 'error'); }
+}
+
+// ── TOAST ─────────────────────────────────────────────────────
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = (type === 'success' ? '✓  ' : '✕  ') + msg;
+  t.className   = `toast ${type} show`;
+  setTimeout(() => { t.className = 'toast'; }, 4500);
+}
+</script>
+</body>
+</html>
