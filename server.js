@@ -49,17 +49,30 @@ if (process.env.EXTRA_ORIGINS) {
 
 app.use(cors({
   origin: (origin, cb) => {
-    // Allow requests with no origin (mobile apps, Postman, curl, same-origin)
+    // Allow requests with no origin (same-origin, mobile apps, Postman, curl)
     if (!origin) return cb(null, true);
 
-    // Allow if in whitelist
+    // Allow if in explicit whitelist
     if (allowedOrigins.includes(origin)) return cb(null, true);
 
     // Allow any localhost / 127.0.0.1 on any port (development)
     if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) return cb(null, true);
 
-    // Allow local network IPs (192.168.x.x, 10.x.x.x) — for testing on phone/LAN
+    // Allow local network IPs (192.168.x.x, 10.x.x.x) — for LAN testing
     if (/^https?:\/\/(192\.168\.|10\.|172\.(1[6-9]|2\d|3[01])\.)/.test(origin)) return cb(null, true);
+
+    // Allow Railway deployment domains (*.up.railway.app)
+    if (/^https:\/\/[\w-]+\.up\.railway\.app$/.test(origin)) return cb(null, true);
+
+    // Allow Render deployment domains (*.onrender.com)
+    if (/^https:\/\/[\w-]+\.onrender\.com$/.test(origin)) return cb(null, true);
+
+    // Allow Vercel deployment domains (*.vercel.app)
+    if (/^https:\/\/[\w-]+\.vercel\.app$/.test(origin)) return cb(null, true);
+
+    // Allow custom domain from env (e.g. https://nyayai.in)
+    const customDomain = process.env.CUSTOM_DOMAIN;
+    if (customDomain && origin === customDomain) return cb(null, true);
 
     console.error(`[CORS blocked] ${origin}`);
     cb(new Error(`CORS: Origin ${origin} not allowed`));
