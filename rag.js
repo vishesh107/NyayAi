@@ -15,9 +15,9 @@ const { supabase } = require('./db');
 const pdfParse = require('pdf-parse');
 
 // ── Constants ─────────────────────────────────────────────────
-const CHUNK_SIZE     = 800;   // characters per chunk
-const CHUNK_OVERLAP  = 150;   // overlap between chunks for context continuity
-const MAX_CHUNKS_CTX = 4;     // max chunks to inject into Claude prompt
+const CHUNK_SIZE     = 1200;  // larger chunks = more context per chunk
+const CHUNK_OVERLAP  = 200;   // overlap between chunks for context continuity
+const MAX_CHUNKS_CTX = 6;     // more chunks = better coverage
 const EMBED_MODEL    = 'text-embedding-ada-002';
 const EMBED_DIM      = 1536;
 
@@ -213,40 +213,76 @@ async function retrieveContext(query, catKey, userId = null) {
 // Searches chunk text directly using Supabase full-text search
 // ════════════════════════════════════════════════════════════════
 async function keywordSearch(query, catKey) {
-  // Extract key terms (remove common words)
-  const stopWords = new Set(['what','is','are','the','a','an','in','of','for','to','and','or','my','i','me','how','can','do','does','when','where','which']);
+  // Extract meaningful legal/tax terms — keep numbers, section refs, form names
+  const stopWords = new Set([
+    'what','is','are','the','a','an','in','of','for','to','and','or',
+    'my','i','me','how','can','do','does','when','where','which','tell',
+    'about','please','explain','help','want','know','under','new','old'
+  ]);
+
+  // Keep legal keywords: section numbers, form names, act references
   const terms = query
     .toLowerCase()
     .replace(/[^a-zA-Z0-9\u0900-\u097F ]/g, ' ')
     .split(/\s+/)
     .filter(w => w.length > 2 && !stopWords.has(w))
-    .slice(0, 5);
+    .slice(0, 8);  // more terms for legal queries
 
-  if (terms.length === 0) return [];
+  // Also add exact phrases for section numbers like "section 80c", "itr-1", "form 16"
+  const phrases = [];
+  const secMatch = query.match(/section\s+[\w()]+/gi) || [];
+  const formMatch = query.match(/form\s+[\w-]+/gi) || [];
+  const itrMatch  = query.match(/itr[-\s]?[\d]+/gi) || [];
+  [...secMatch, ...formMatch, ...itrMatch].forEach(p => phrases.push(p.toLowerCase().trim()));
 
-  // Search using ilike for each term
+  if (terms.length === 0 && phrases.length === 0) {
+    // Last resort: return most recently added docs for this category
+    const { data } = await supabase
+      .from('document_chunks')
+      .select('id, document_id, content, documents!inner(title, source_url, effective_date, is_active)')
+      .eq('cat_key', catKey)
+      .eq('documents.is_active', true)
+      .order('created_at', { ascending: false })
+      .limit(MAX_CHUNKS_CTX);
+    return (data || []).map(formatChunk);
+  }
+
+  // Build search conditions
+  const allTerms = [...new Set([...terms, ...phrases])];
+  const conditions = allTerms.map(t => `content.ilike.%${t}%`).join(',');
+
   const { data, error } = await supabase
     .from('document_chunks')
-    .select(`
-      id, document_id, content,
-      documents!inner(title, source_url, effective_date, is_active, cat_key)
-    `)
+    .select('id, document_id, content, documents!inner(title, source_url, effective_date, is_active)')
     .eq('cat_key', catKey)
     .eq('documents.is_active', true)
-    .or(terms.map(t => `content.ilike.%${t}%`).join(','))
-    .limit(MAX_CHUNKS_CTX);
+    .or(conditions)
+    .limit(MAX_CHUNKS_CTX * 2);  // fetch more, then score and trim
 
-  if (error || !data) return [];
+  if (error || !data || data.length === 0) return [];
 
-  return data.map(c => ({
+  // Score chunks by how many terms they match
+  const scored = data.map(c => {
+    const text  = c.content.toLowerCase();
+    const score = allTerms.filter(t => text.includes(t)).length;
+    return { ...c, _score: score };
+  });
+
+  // Sort by score descending, return top MAX_CHUNKS_CTX
+  scored.sort((a, b) => b._score - a._score);
+  return scored.slice(0, MAX_CHUNKS_CTX).map(formatChunk);
+}
+
+function formatChunk(c) {
+  return {
     id:             c.id,
     document_id:    c.document_id,
     content:        c.content,
-    similarity:     0.5,
+    similarity:     0.6,
     doc_title:      c.documents?.title,
     doc_source:     c.documents?.source_url,
     effective_date: c.documents?.effective_date,
-  }));
+  };
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -255,29 +291,35 @@ async function keywordSearch(query, catKey) {
 function buildContextString(chunks) {
   if (!chunks || chunks.length === 0) return null;
 
-  const lines = [
-    '═══════════════════════════════════════════',
-    'VERIFIED LEGAL DOCUMENTS FROM DATABASE:',
-    '(Use this information to validate and enhance your answer)',
-    '═══════════════════════════════════════════',
-  ];
+  const parts = [];
+
+  parts.push(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+VERIFIED OFFICIAL DOCUMENTS (${chunks.length} sources found):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
 
   chunks.forEach((chunk, i) => {
     const dateStr = chunk.effective_date
-      ? ` (Effective: ${new Date(chunk.effective_date).toLocaleDateString('en-IN')})`
+      ? ` | Effective: ${new Date(chunk.effective_date).toLocaleDateString('en-IN')}`
       : '';
-    lines.push(`\n[Document ${i + 1}: ${chunk.doc_title}${dateStr}]`);
-    if (chunk.doc_source) lines.push(`[Source: ${chunk.doc_source}]`);
-    lines.push(chunk.content);
+    const src = chunk.doc_source ? ` | Source: ${chunk.doc_source}` : '';
+    parts.push(`\n📄 [Source ${i + 1}: ${chunk.doc_title}${dateStr}${src}]\n${chunk.content}`);
   });
 
-  lines.push('\n═══════════════════════════════════════════');
-  lines.push('If the above documents contain relevant information, prioritise them over general knowledge.');
-  lines.push('If documents are outdated or incomplete, combine with your training knowledge.');
-  lines.push('Always mention which document you are referencing.');
-  lines.push('═══════════════════════════════════════════');
+  parts.push(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CRITICAL INSTRUCTIONS FOR YOUR RESPONSE:
+1. The documents above are OFFICIAL and take priority over your training data
+2. Structure your answer clearly using:
+   • **Bold** for important terms, section numbers, form names
+   • Bullet points (•) for lists of items
+   • Numbered steps (1. 2. 3.) for processes
+   • Tables where comparing old vs new information
+3. Always cite which document/section you are referencing like: (Source: Income Tax Act 2025, Section X)
+4. If the document shows NEW information that differs from old rules, clearly say: "⚡ NEW (effective [date]):"
+5. End with a disclaimer: "⚠️ Always verify with a CA or the official incometax.gov.in portal"
+6. If user wrote in Hindi, respond in Hindi but keep technical terms and section numbers in English
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
 
-  return lines.join('\n');
+  return parts.join('\n');
 }
 
 // ════════════════════════════════════════════════════════════════

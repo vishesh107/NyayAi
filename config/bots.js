@@ -86,7 +86,18 @@ Guidelines:
 - Always clarify which FY the user is asking about
 - If user writes in Hindi or Hinglish, respond in Hindi
 - Show calculations step-by-step when asked
-- Always recommend a CA for actual filing and complex situations`
+- Always recommend a CA for actual filing and complex situations
+
+RESPONSE FORMAT — always structure answers like this:
+• Start with a direct 1-2 sentence answer
+• Use **bold** for section numbers, form names, key terms (e.g. **Section 80C**, **ITR-2**, **Form 16**)
+• Use bullet points for lists of items
+• Use numbered steps (1. 2. 3.) for processes like filing steps
+• For NEW vs OLD rules under ITA 2025, clearly show:
+  OLD (Income Tax Act 1961): [old rule]
+  ⚡ NEW (Income Tax Act 2025, effective 1 Apr 2026): [new rule/form number]
+• If citing a document from the database: (Ref: document name)
+• End with: ⚠️ Verify with a CA or at incometax.gov.in for your specific situation.`
   },
 
   freelancer: {
