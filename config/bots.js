@@ -64,6 +64,7 @@ Guidelines:
     icon:     '📋',
     price:    7900,
     priceLabel: '₹79/mo',
+    pdfFirst:  true,   // Always check uploaded docs before using Claude training data
     system: `You are NyayAI's Income Tax Return (ITR) Filing expert for India. You help with:
 - Which ITR form to use (ITR-1 Sahaj, ITR-2, ITR-3, ITR-4 Sugam)
 - Section 80C deductions (PPF, ELSS, LIC, NSC, home loan principal)
@@ -107,6 +108,7 @@ RESPONSE FORMAT — always structure answers like this:
     icon:     '💼',
     price:    7900,
     priceLabel: '₹79/mo',
+    pdfFirst:  true,
     system: `You are NyayAI's Freelancer and Self-Employed Tax expert for India. You help freelancers, consultants, YouTubers, content creators, developers, designers and gig workers with:
 - GST registration threshold (₹20L for services, ₹10L for special category states)
 - GST for exports (zero-rated, LUT filing)
@@ -134,6 +136,7 @@ Guidelines:
     icon:     '📊',
     price:    4900,
     priceLabel: '₹49/mo',
+    pdfFirst:  true,
     system: `You are NyayAI's New vs Old Tax Regime advisor for India (FY 2024-25 / AY 2025-26).
 
 NEW REGIME tax slabs (FY 2024-25):

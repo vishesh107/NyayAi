@@ -153,40 +153,80 @@ router.post('/:botKey', authMiddleware, async (req, res) => {
 
   // ── 6. Streaming response ─────────────────────────────────
   if (wantsStream) {
-    return handleStream(res, bot, validMessages, model, user, botKey, userMessage, ragContext);
+    return handleStream(res, bot, validMessages, model, user, botKey, userMessage, systemPrompt);
   }
 
-  // ── 7. RAG — retrieve relevant document context ─────────────
-  let ragContext = null;
-  try {
-    const { chunks, keyFacts } = await retrieveContextEnhanced(userMessage, botKey, user.id);
+  // ── 7. RAG — PDF-first retrieval ────────────────────────────
+  let ragContext  = null;
+  let docsFound   = false;
+  const isPdfFirst = bot.pdfFirst === true;
 
-    // Build context from chunks (database search)
+  try {
+    const { chunks, keyFacts } = await retrieveContextEnhanced(userMessage, botKey, user.id, validMessages);
+
+    // Build context from chunks (Supabase vector/keyword search)
     const chunkContext = chunks.length > 0 ? buildContextString(chunks) : null;
 
-    // Build context from pre-extracted key facts (direct PDF extraction)
+    // Build context from pre-extracted key facts
     let factsContext = null;
     if (keyFacts) {
       factsContext = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📋 VERIFIED FACTS FROM INCOME TAX ACT 2025 (Official Document):
+📋 VERIFIED FACTS — INCOME TAX ACT 2025 (Official Document):
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ${keyFacts}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
     }
 
-    // Combine both — key facts take priority, chunks add supporting detail
-    if (factsContext || chunkContext) {
+    docsFound = !!(factsContext || chunkContext);
+
+    if (docsFound) {
       ragContext = [factsContext, chunkContext].filter(Boolean).join('\n\n');
-      console.log(`[RAG] chunks:${chunks.length} keyFacts:${keyFacts ? 'yes' : 'no'} for ${botKey}`);
+      console.log(`[RAG] chunks:${chunks.length} keyFacts:${keyFacts ? 'yes' : 'no'} pdfFirst:${isPdfFirst} for ${botKey}`);
     }
   } catch (ragErr) {
     console.warn(`[RAG] Retrieval failed (non-fatal): ${ragErr.message}`);
   }
 
-  // Build enhanced system prompt — inject document context if found
-  const systemPrompt = ragContext
-    ? `${bot.system}\n\n${ragContext}`
-    : bot.system;
+  // ── Build system prompt based on PDF-first mode ───────────
+  let systemPrompt;
+
+  if (isPdfFirst) {
+    if (docsFound) {
+      // DOCUMENTS FOUND → instruct Claude to use them as primary source
+      systemPrompt = `${bot.system}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔴 CRITICAL INSTRUCTION — PDF-FIRST MODE ACTIVE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+The administrator has uploaded OFFICIAL LEGAL DOCUMENTS into the database.
+These documents represent the LATEST and MOST AUTHORITATIVE source of information.
+
+YOUR RULES:
+1. The documents below are your PRIMARY source — treat them as GROUND TRUTH
+2. Your training data is SECONDARY — only use it to fill gaps not covered by documents
+3. If the document says something DIFFERENT from your training data → TRUST THE DOCUMENT
+4. Always cite: "(Ref: [document name], Section X)" when using document content
+5. If a question is NOT covered by the documents → say so clearly, then answer from training data
+6. Format your answer with: bold section numbers, bullet points, tables where helpful
+7. For new vs old law → always show the comparison clearly
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+${ragContext}`;
+    } else {
+      // NO DOCUMENTS FOUND → tell Claude to be explicit about this
+      systemPrompt = `${bot.system}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚠️ PDF-FIRST MODE — No matching documents found in database for this query.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+INSTRUCTION: Answer from your training knowledge, but clearly state at the START of your response:
+"📂 Note: No specific document was found in our database for this query. The answer below is based on general knowledge and may not reflect the very latest regulations. Please verify at incometax.gov.in."
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+    }
+  } else {
+    // Standard mode (non-PDF-first bots)
+    systemPrompt = ragContext ? `${bot.system}\n\n${ragContext}` : bot.system;
+  }
 
   // ── 8. Standard response ──────────────────────────────────
   try {
@@ -233,7 +273,7 @@ ${keyFacts}
 // ══════════════════════════════════════════════════════════════
 // Streaming handler — sends text chunks as Server-Sent Events
 // ══════════════════════════════════════════════════════════════
-async function handleStream(res, bot, messages, model, user, botKey, userMessage, ragContext = null) {
+async function handleStream(res, bot, messages, model, user, botKey, userMessage, systemPromptOrRag = null) {
   res.setHeader('Content-Type',  'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection',    'keep-alive');
@@ -242,7 +282,12 @@ async function handleStream(res, bot, messages, model, user, botKey, userMessage
   let fullReply = '';
 
   try {
-    const streamSystem = ragContext ? `${bot.system}\n\n${ragContext}` : bot.system;
+    // Accept either a full systemPrompt string or a ragContext string
+    const streamSystem = systemPromptOrRag && systemPromptOrRag.includes('CRITICAL INSTRUCTION')
+      ? systemPromptOrRag   // already a full built system prompt (PDF-first mode)
+      : systemPromptOrRag
+        ? `${bot.system}\n\n${systemPromptOrRag}`
+        : bot.system;
     const stream = getClient().messages.stream({
       model,
       max_tokens: 1500,

@@ -209,11 +209,11 @@ async function retrieveContext(query, catKey, userId = null) {
 }
 
 // Enhanced retrieve that combines vector/keyword search with pre-extracted facts
-async function retrieveContextEnhanced(query, catKey, userId = null) {
+async function retrieveContextEnhanced(query, catKey, userId = null, conversationHistory = []) {
   // Run both in parallel
   const [chunks, keyFacts] = await Promise.all([
     retrieveContext(query, catKey, userId),
-    Promise.resolve(getRelevantKeyFacts(query, catKey)),
+    Promise.resolve(getRelevantKeyFacts(query, catKey, conversationHistory)),
   ]);
   return { chunks, keyFacts };
 }
@@ -408,27 +408,50 @@ function loadKeyFacts() {
   return {};
 }
 
-function getRelevantKeyFacts(query, catKey) {
+function getRelevantKeyFacts(query, catKey, conversationHistory = []) {
   const facts = loadKeyFacts();
   const catFacts = facts[catKey] || {};
   if (Object.keys(catFacts).length === 0) return null;
 
-  const q = query.toLowerCase();
+  // Search across ENTIRE conversation — not just last message
+  // User may say "as per 2025" after asking about contractors earlier
+  const allText = [
+    query,
+    ...conversationHistory.map(m => m.content || '')
+  ].join(' ').toLowerCase();
+
   const matched = [];
 
-  // Match based on keywords in the query
   const matchers = [
-    { keys: ['tax audit','section 44ab','section 63','3cd','3ca','3cb','audit report','turnover audit'], section: 'tax_audit_section_63' },
-    { keys: ['contractor','194c','contractor tds','contract payment','works contract'], section: 'contractor_tds' },
-    { keys: ['professional','194j','tds professional','technical service','freelancer tds'], section: 'contractor_tds_rates' },
+    {
+      keys: ['tax audit','44ab','section 63','3cd','3ca','3cb','audit report','turnover audit','tax audit report','statutory audit'],
+      section: 'tax_audit_section_63'
+    },
+    {
+      keys: ['contractor','194c','contractor tds','contract payment','works contract','tds on contractor','sub-contractor','subcontractor','deduct tds contractor'],
+      section: 'contractor_tds'
+    },
+    {
+      keys: ['professional','194j','tds professional','technical service','freelancer tds','consultant tds','fees professional'],
+      section: 'contractor_tds_rates'
+    },
   ];
 
+  // Also trigger on intent keywords — user asking about 2025/new law after topic is established
+  const is2025Query = /2025|new act|new law|ita 2025|itax 2025|income tax 2025|april 2026|new regulation/.test(allText);
+
   matchers.forEach(m => {
-    if (m.keys.some(k => q.includes(k))) {
+    if (m.keys.some(k => allText.includes(k))) {
       const fact = catFacts[m.section];
       if (fact) matched.push(fact);
     }
   });
+
+  // If asking about 2025 and we matched something — also ensure all relevant facts included
+  if (is2025Query && matched.length === 0) {
+    // Return all facts for this category as context
+    Object.values(catFacts).forEach(f => matched.push(f));
+  }
 
   return matched.length > 0 ? matched.join('\n\n') : null;
 }
