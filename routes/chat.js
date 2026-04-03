@@ -10,7 +10,7 @@ const { Users, Conversations } = require('../db');
 const { authMiddleware }       = require('../middleware/auth');
 const { BOTS }                 = require('../config/bots');
 
-const { retrieveContext, buildContextString } = require('../rag');
+const { retrieveContextEnhanced, buildContextString } = require('../rag');
 const router = express.Router();
 
 // ── Anthropic client (lazy singleton) ────────────────────────
@@ -159,10 +159,25 @@ router.post('/:botKey', authMiddleware, async (req, res) => {
   // ── 7. RAG — retrieve relevant document context ─────────────
   let ragContext = null;
   try {
-    const chunks = await retrieveContext(userMessage, botKey, user.id);
-    if (chunks.length > 0) {
-      ragContext = buildContextString(chunks);
-      console.log(`[RAG] ${chunks.length} chunks retrieved for ${botKey}`);
+    const { chunks, keyFacts } = await retrieveContextEnhanced(userMessage, botKey, user.id);
+
+    // Build context from chunks (database search)
+    const chunkContext = chunks.length > 0 ? buildContextString(chunks) : null;
+
+    // Build context from pre-extracted key facts (direct PDF extraction)
+    let factsContext = null;
+    if (keyFacts) {
+      factsContext = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 VERIFIED FACTS FROM INCOME TAX ACT 2025 (Official Document):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${keyFacts}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+    }
+
+    // Combine both — key facts take priority, chunks add supporting detail
+    if (factsContext || chunkContext) {
+      ragContext = [factsContext, chunkContext].filter(Boolean).join('\n\n');
+      console.log(`[RAG] chunks:${chunks.length} keyFacts:${keyFacts ? 'yes' : 'no'} for ${botKey}`);
     }
   } catch (ragErr) {
     console.warn(`[RAG] Retrieval failed (non-fatal): ${ragErr.message}`);

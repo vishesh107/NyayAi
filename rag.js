@@ -208,6 +208,16 @@ async function retrieveContext(query, catKey, userId = null) {
   return chunks;
 }
 
+// Enhanced retrieve that combines vector/keyword search with pre-extracted facts
+async function retrieveContextEnhanced(query, catKey, userId = null) {
+  // Run both in parallel
+  const [chunks, keyFacts] = await Promise.all([
+    retrieveContext(query, catKey, userId),
+    Promise.resolve(getRelevantKeyFacts(query, catKey)),
+  ]);
+  return { chunks, keyFacts };
+}
+
 // ════════════════════════════════════════════════════════════════
 // KEYWORD SEARCH — fallback when no OpenAI key / no vector results
 // Searches chunk text directly using Supabase full-text search
@@ -383,9 +393,51 @@ async function getDocumentStats() {
   return stats;
 }
 
+// ════════════════════════════════════════════════════════════════
+// PRE-EXTRACTED KEY FACTS — bypass RAG for critical ITA 2025 sections
+// These were manually verified from the actual PDF documents
+// ════════════════════════════════════════════════════════════════
+const path = require('path');
+const fs   = require('fs');
+
+function loadKeyFacts() {
+  try {
+    const p = path.join(__dirname, 'data', 'ita2025_key_facts.json');
+    if (fs.existsSync(p)) return JSON.parse(fs.readFileSync(p, 'utf8'));
+  } catch {}
+  return {};
+}
+
+function getRelevantKeyFacts(query, catKey) {
+  const facts = loadKeyFacts();
+  const catFacts = facts[catKey] || {};
+  if (Object.keys(catFacts).length === 0) return null;
+
+  const q = query.toLowerCase();
+  const matched = [];
+
+  // Match based on keywords in the query
+  const matchers = [
+    { keys: ['tax audit','section 44ab','section 63','3cd','3ca','3cb','audit report','turnover audit'], section: 'tax_audit_section_63' },
+    { keys: ['contractor','194c','contractor tds','contract payment','works contract'], section: 'contractor_tds' },
+    { keys: ['professional','194j','tds professional','technical service','freelancer tds'], section: 'contractor_tds_rates' },
+  ];
+
+  matchers.forEach(m => {
+    if (m.keys.some(k => q.includes(k))) {
+      const fact = catFacts[m.section];
+      if (fact) matched.push(fact);
+    }
+  });
+
+  return matched.length > 0 ? matched.join('\n\n') : null;
+}
+
 module.exports = {
   ingestDocument,
   retrieveContext,
+  retrieveContextEnhanced,
+  getRelevantKeyFacts,
   buildContextString,
   extractTextFromPDF,
   listDocuments,
