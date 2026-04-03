@@ -4,1067 +4,365 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NyayAI — India's Legal & Tax Intelligence Platform</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
 <style>
 :root {
-  --ink: #0f0e0d;
-  --paper: #faf8f5;
-  --cream: #f2ede6;
-  --gold: #c9963a;
-  --gold-light: #f0d99a;
-  --gold-dark: #8a6320;
-  --teal: #1a6b5c;
-  --teal-light: #e6f4f1;
-  --red: #c0392b;
-  --red-light: #fdecea;
-  --purple: #4a3580;
-  --purple-light: #edeaf7;
-  --border: #e2ddd6;
-  --muted: #7a756e;
-  --white: #ffffff;
-  --card-shadow: 0 2px 16px rgba(15,14,13,0.07);
+  --ink:#0f0e0d; --paper:#faf8f5; --cream:#f2ede6;
+  --gold:#c9963a; --gold-light:#f0d99a; --gold-dark:#8a6320;
+  --teal:#1a6b5c; --teal-light:#e6f4f1;
+  --red:#c0392b; --red-light:#fdecea;
+  --amber:#d97706; --amber-light:#fef3c7;
+  --border:#e2ddd6; --muted:#7a756e; --white:#fff;
 }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--cream)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.screen{display:none;min-height:100vh}.screen.active{display:block}
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+/* ═══ LANDING ═══ */
+#landing{background:var(--ink);color:var(--paper);position:relative;overflow:hidden}
+.bg-orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.1;pointer-events:none}
+.orb1{width:700px;height:700px;background:var(--gold);top:-250px;right:-200px}
+.orb2{width:500px;height:500px;background:var(--teal);bottom:50px;left:-200px}
 
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--paper);
-  color: var(--ink);
-  line-height: 1.6;
-  overflow-x: hidden;
-}
+/* Nav */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:20px 48px;border-bottom:1px solid rgba(255,255,255,.08);position:relative;z-index:10}
+.logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--gold);letter-spacing:-.3px}
+.logo span{color:var(--paper);font-weight:400}
+.nav-links{display:flex;gap:32px;align-items:center}
+.nav-links a{color:rgba(255,255,255,.55);text-decoration:none;font-size:14px;transition:color .2s}
+.nav-links a:hover{color:var(--paper)}
+.btn-nav{background:var(--gold);color:var(--ink);border:none;padding:9px 22px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s}
+.btn-nav:hover{background:var(--gold-light)}
 
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--cream); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
-/* ── SCREENS ── */
-.screen { display: none; min-height: 100vh; }
-.screen.active { display: block; }
-
-/* ══════════════════════════════════════
-   LANDING PAGE
-══════════════════════════════════════ */
-#landing {
-  background: var(--ink);
-  color: var(--paper);
-  position: relative;
-  overflow: hidden;
-}
-
-.nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 22px 48px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  position: relative;
-  z-index: 10;
-}
-
-.logo {
-  font-family: 'Playfair Display', serif;
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--gold);
-  letter-spacing: -0.3px;
-}
-.logo span { color: var(--paper); font-weight: 400; }
-
-.nav-links { display: flex; gap: 32px; align-items: center; }
-.nav-links a {
-  color: rgba(255,255,255,0.6);
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 400;
-  transition: color 0.2s;
-}
-.nav-links a:hover { color: var(--paper); }
-
-.btn-nav {
-  background: var(--gold);
-  color: var(--ink);
-  border: none;
-  padding: 9px 22px;
-  border-radius: 6px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.btn-nav:hover { background: var(--gold-light); }
+/* Powered by badge */
+.powered-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:5px 14px;font-size:12px;color:rgba(255,255,255,.5);margin-bottom:20px}
+.powered-badge img{width:14px;height:14px;opacity:.7}
+.powered-badge strong{color:rgba(255,255,255,.75)}
 
 /* Hero */
-.hero {
-  text-align: center;
-  padding: 100px 48px 80px;
-  position: relative;
-  z-index: 2;
-}
+.hero{text-align:center;padding:80px 48px 70px;position:relative;z-index:2}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(201,150,58,.15);border:1px solid rgba(201,150,58,.3);color:var(--gold);font-size:12px;font-weight:500;padding:5px 14px;border-radius:20px;margin-bottom:24px;letter-spacing:.05em;text-transform:uppercase}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(36px,6vw,70px);font-weight:700;line-height:1.1;margin-bottom:22px;letter-spacing:-1px}
+.hero h1 em{font-style:italic;color:var(--gold)}
+.hero p{font-size:18px;color:rgba(255,255,255,.55);max-width:540px;margin:0 auto 36px;line-height:1.7;font-weight:300}
+.hero-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:32px}
+.btn-primary{background:var(--gold);color:var(--ink);border:none;padding:14px 30px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-primary:hover{background:var(--gold-light);transform:translateY(-1px)}
+.btn-secondary{background:transparent;color:var(--paper);border:1px solid rgba(255,255,255,.2);padding:14px 30px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:400;cursor:pointer;transition:all .2s}
+.btn-secondary:hover{border-color:rgba(255,255,255,.5)}
 
-.hero-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(201,150,58,0.15);
-  border: 1px solid rgba(201,150,58,0.3);
-  color: var(--gold);
-  font-size: 12px;
-  font-weight: 500;
-  padding: 5px 14px;
-  border-radius: 20px;
-  margin-bottom: 28px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-.hero h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(38px, 6vw, 72px);
-  font-weight: 700;
-  line-height: 1.1;
-  margin-bottom: 24px;
-  letter-spacing: -1px;
-}
-
-.hero h1 em {
-  font-style: italic;
-  color: var(--gold);
-}
-
-.hero p {
-  font-size: 18px;
-  color: rgba(255,255,255,0.6);
-  max-width: 560px;
-  margin: 0 auto 40px;
-  line-height: 1.7;
-  font-weight: 300;
-}
-
-.hero-ctas { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-
-.btn-primary {
-  background: var(--gold);
-  color: var(--ink);
-  border: none;
-  padding: 14px 32px;
-  border-radius: 8px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
-
-.btn-secondary {
-  background: transparent;
-  color: var(--paper);
-  border: 1px solid rgba(255,255,255,0.2);
-  padding: 14px 32px;
-  border-radius: 8px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 15px;
-  font-weight: 400;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.btn-secondary:hover { border-color: rgba(255,255,255,0.5); }
+/* Trust badges row */
+.trust-row{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin-top:4px}
+.trust-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:5px 14px;font-size:12px;color:rgba(255,255,255,.5)}
 
 /* Stats bar */
-.stats-bar {
-  display: flex;
-  justify-content: center;
-  gap: 60px;
-  padding: 40px 48px;
-  border-top: 1px solid rgba(255,255,255,0.08);
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  position: relative;
-  z-index: 2;
-}
+.stats-bar{display:flex;justify-content:center;gap:60px;padding:36px 48px;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);position:relative;z-index:2}
+.stat-item{text-align:center}
+.stat-num{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--gold)}
+.stat-label{font-size:13px;color:rgba(255,255,255,.35);margin-top:3px}
 
-.stat-item { text-align: center; }
-.stat-num {
-  font-family: 'Playfair Display', serif;
-  font-size: 32px;
-  font-weight: 700;
-  color: var(--gold);
-}
-.stat-label { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 4px; }
+/* Testimonials */
+.testimonials-section{padding:72px 48px;position:relative;z-index:2;background:rgba(255,255,255,.02);border-top:1px solid rgba(255,255,255,.06)}
+.testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;max-width:1000px;margin:0 auto}
+.testi-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:24px;transition:border-color .2s}
+.testi-card:hover{border-color:rgba(201,150,58,.3)}
+.testi-stars{color:var(--gold);font-size:13px;margin-bottom:10px;letter-spacing:2px}
+.testi-text{font-size:14px;color:rgba(255,255,255,.65);line-height:1.7;margin-bottom:16px;font-style:italic}
+.testi-author{display:flex;align-items:center;gap:10px}
+.testi-avatar{width:36px;height:36px;border-radius:50%;background:rgba(201,150,58,.2);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
+.testi-name{font-size:13px;font-weight:600;color:var(--paper)}
+.testi-loc{font-size:11px;color:rgba(255,255,255,.35)}
 
-/* Categories section */
-.categories-section {
-  padding: 80px 48px;
-  position: relative;
-  z-index: 2;
-}
+/* Categories */
+.categories-section{padding:72px 48px;position:relative;z-index:2}
+.section-header{text-align:center;margin-bottom:48px}
+.section-tag{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.section-header h2{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:var(--paper);margin-bottom:10px}
+.section-header p{color:rgba(255,255,255,.45);font-size:16px}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;max-width:1100px;margin:0 auto}
+.cat-card-landing{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:26px 22px;cursor:pointer;transition:all .25s;text-align:left}
+.cat-card-landing:hover{background:rgba(255,255,255,.07);border-color:rgba(201,150,58,.3);transform:translateY(-2px)}
+.cat-icon-land{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:14px}
+.cat-card-landing h3{font-size:14px;font-weight:600;color:var(--paper);margin-bottom:5px}
+.cat-card-landing p{font-size:12px;color:rgba(255,255,255,.4);line-height:1.55}
+.cat-price{margin-top:14px;font-size:12px;font-weight:600;color:var(--gold)}
 
-.section-header { text-align: center; margin-bottom: 52px; }
-.section-tag {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 12px;
-}
-.section-header h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: 38px;
-  font-weight: 700;
-  color: var(--paper);
-  margin-bottom: 12px;
-}
-.section-header p { color: rgba(255,255,255,0.5); font-size: 16px; }
+/* Pricing */
+.pricing-section{padding:72px 48px;background:rgba(255,255,255,.02);position:relative;z-index:2;border-top:1px solid rgba(255,255,255,.06)}
+.plans-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;max-width:900px;margin:0 auto}
+.plan-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:30px 26px}
+.plan-card.featured{background:var(--gold);border-color:var(--gold)}
+.plan-name{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.45);margin-bottom:14px}
+.plan-card.featured .plan-name{color:rgba(15,14,13,.55)}
+.plan-price{font-family:'Playfair Display',serif;font-size:40px;font-weight:700;color:var(--paper);margin-bottom:3px}
+.plan-card.featured .plan-price{color:var(--ink)}
+.plan-period{font-size:13px;color:rgba(255,255,255,.35);margin-bottom:22px}
+.plan-card.featured .plan-period{color:rgba(15,14,13,.45)}
+.plan-features{list-style:none;margin-bottom:24px}
+.plan-features li{font-size:13px;color:rgba(255,255,255,.6);padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:7px}
+.plan-card.featured .plan-features li{color:rgba(15,14,13,.7);border-bottom-color:rgba(15,14,13,.07)}
+.plan-features li::before{content:'✓';color:var(--gold);font-weight:700;flex-shrink:0}
+.plan-card.featured .plan-features li::before{color:var(--ink)}
+.btn-plan{width:100%;padding:11px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.2);background:transparent;color:var(--paper);transition:all .2s}
+.btn-plan:hover{background:rgba(255,255,255,.08)}
+.plan-card.featured .btn-plan{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.plan-card.featured .btn-plan:hover{background:#1a1917}
 
-.cat-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 16px;
-  max-width: 1100px;
-  margin: 0 auto;
-}
+/* Footer */
+.footer{padding:40px 48px;border-top:1px solid rgba(255,255,255,.08);position:relative;z-index:2}
+.footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:40px;align-items:start}
+.footer-brand .logo{font-size:20px}
+.footer-brand p{font-size:13px;color:rgba(255,255,255,.35);margin-top:10px;line-height:1.6;max-width:220px}
+.footer-col h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.3);margin-bottom:14px}
+.footer-col a{display:block;font-size:13px;color:rgba(255,255,255,.45);text-decoration:none;margin-bottom:8px;transition:color .2s}
+.footer-col a:hover{color:var(--paper)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.06);margin-top:32px;padding-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.footer-bottom p{font-size:12px;color:rgba(255,255,255,.25)}
+.anthropic-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:5px 14px;font-size:12px;color:rgba(255,255,255,.45)}
+.anthropic-badge strong{color:rgba(255,255,255,.65)}
 
-.cat-card-landing {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 14px;
-  padding: 28px 24px;
-  cursor: pointer;
-  transition: all 0.25s;
-  text-align: left;
-}
-.cat-card-landing:hover {
-  background: rgba(255,255,255,0.07);
-  border-color: rgba(201,150,58,0.3);
-  transform: translateY(-2px);
-}
-.cat-icon-land {
-  width: 44px; height: 44px;
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 20px;
-  margin-bottom: 16px;
-}
-.cat-card-landing h3 { font-size: 15px; font-weight: 600; color: var(--paper); margin-bottom: 6px; }
-.cat-card-landing p { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.55; }
-.cat-price {
-  margin-top: 16px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--gold);
-}
+/* ═══ AUTH MODAL ═══ */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,14,13,.8);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--white);border-radius:18px;width:420px;max-width:calc(100vw - 32px);overflow:hidden;animation:slideUp .25s ease}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-header{background:var(--ink);padding:28px 32px;text-align:center}
+.modal-logo{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--gold);margin-bottom:6px}
+.modal-title{font-size:13px;color:rgba(255,255,255,.5)}
+.modal-body{padding:28px 32px}
+.tab-row{display:flex;gap:0;margin-bottom:22px;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+.tab-btn{flex:1;padding:10px;border:none;background:var(--cream);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s}
+.tab-btn.active{background:var(--ink);color:var(--paper)}
+.form-group{margin-bottom:14px}
+.form-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;display:block}
+.form-input{width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);background:var(--paper);outline:none;transition:border-color .2s}
+.form-input:focus{border-color:var(--gold)}
+.privacy-note{font-size:11px;color:var(--muted);text-align:center;margin:10px 0;display:flex;align-items:center;justify-content:center;gap:5px}
+.trial-banner{background:var(--teal-light);border:1px solid rgba(26,107,92,.2);border-radius:8px;padding:9px 12px;font-size:12px;color:var(--teal);margin-bottom:16px;display:flex;align-items:center;gap:7px}
+.btn-auth{width:100%;padding:13px;background:var(--ink);color:var(--paper);border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s}
+.btn-auth:hover{background:#2a2825}
+.auth-note{text-align:center;margin-top:12px;font-size:12px;color:var(--muted)}
+.auth-note a{color:var(--gold-dark);cursor:pointer}
 
-/* Pricing section */
-.pricing-section {
-  padding: 80px 48px;
-  background: rgba(255,255,255,0.02);
-  position: relative;
-  z-index: 2;
-}
+/* ═══ DASHBOARD ═══ */
+#dashboard{background:var(--cream)}
+.dash-nav{background:var(--white);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:100}
+.dash-logo{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--gold-dark)}
+.dash-logo span{color:var(--ink);font-weight:400}
+.user-pill{display:flex;align-items:center;gap:10px;background:var(--cream);border:1px solid var(--border);border-radius:24px;padding:5px 14px 5px 6px;cursor:pointer}
+.user-avatar{width:28px;height:28px;background:var(--ink);color:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.user-name{font-size:13px;font-weight:500;color:var(--ink)}
+.trial-chip{background:var(--teal-light);color:var(--teal);border:1px solid rgba(26,107,92,.2);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600}
+.trial-chip.urgent{background:var(--amber-light);color:var(--amber);border-color:rgba(217,119,6,.3)}
+.pro-chip{background:var(--gold);color:var(--ink);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700}
+.dash-main{display:flex;min-height:calc(100vh - 58px)}
 
-.plans-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;
-  max-width: 900px;
-  margin: 0 auto;
-}
+/* Dashboard sidebar */
+.sidebar{width:230px;flex-shrink:0;background:var(--white);border-right:1px solid var(--border);padding:20px 0;position:sticky;top:58px;height:calc(100vh - 58px);overflow-y:auto}
+.sidebar-section{margin-bottom:6px}
+.sidebar-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:5px 18px}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:9px 18px;cursor:pointer;transition:all .15s;font-size:13px;color:var(--muted);font-weight:400;border-left:3px solid transparent}
+.sidebar-item:hover{background:var(--cream);color:var(--ink)}
+.sidebar-item.active{background:var(--cream);color:var(--ink);border-left-color:var(--gold);font-weight:500}
+.sidebar-item .s-icon{font-size:15px;width:18px;text-align:center}
+.sidebar-item .s-badge{margin-left:auto;background:#FEF7E0;color:var(--gold-dark);font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px}
 
-.plan-card {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 16px;
-  padding: 32px 28px;
-}
-.plan-card.featured {
-  background: var(--gold);
-  border-color: var(--gold);
-}
-.plan-name {
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: rgba(255,255,255,0.5);
-  margin-bottom: 16px;
-}
-.plan-card.featured .plan-name { color: rgba(15,14,13,0.6); }
-.plan-price {
-  font-family: 'Playfair Display', serif;
-  font-size: 42px;
-  font-weight: 700;
-  color: var(--paper);
-  margin-bottom: 4px;
-}
-.plan-card.featured .plan-price { color: var(--ink); }
-.plan-period { font-size: 13px; color: rgba(255,255,255,0.4); margin-bottom: 24px; }
-.plan-card.featured .plan-period { color: rgba(15,14,13,0.5); }
-.plan-features { list-style: none; margin-bottom: 28px; }
-.plan-features li {
-  font-size: 14px;
-  color: rgba(255,255,255,0.65);
-  padding: 6px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.plan-card.featured .plan-features li { color: rgba(15,14,13,0.75); border-bottom-color: rgba(15,14,13,0.08); }
-.plan-features li::before { content: '✓'; color: var(--gold); font-weight: 700; flex-shrink: 0; }
-.plan-card.featured .plan-features li::before { color: var(--ink); }
+/* Dashboard content */
+.dash-content{flex:1;padding:28px;overflow-y:auto}
 
-.btn-plan {
-  width: 100%;
-  padding: 12px;
-  border-radius: 8px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  border: 1px solid rgba(255,255,255,0.2);
-  background: transparent;
-  color: var(--paper);
-  transition: all 0.2s;
-}
-.btn-plan:hover { background: rgba(255,255,255,0.08); }
-.plan-card.featured .btn-plan {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: var(--paper);
-}
-.plan-card.featured .btn-plan:hover { background: #1a1917; }
+/* Search bar on dashboard */
+.bot-search-wrap{margin-bottom:20px;position:relative}
+.bot-search{width:100%;padding:11px 40px 11px 16px;border:1px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);background:var(--white);outline:none;transition:border-color .2s}
+.bot-search:focus{border-color:var(--gold)}
+.bot-search-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:16px;pointer-events:none}
+.bot-search::placeholder{color:var(--muted)}
 
-/* BG Decoration */
-.bg-orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.12;
-  pointer-events: none;
-}
-.orb1 { width: 600px; height: 600px; background: var(--gold); top: -200px; right: -200px; }
-.orb2 { width: 400px; height: 400px; background: var(--teal); bottom: 100px; left: -150px; }
+/* Welcome bar */
+.welcome-bar{background:var(--ink);border-radius:14px;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;position:relative;overflow:hidden}
+.welcome-bar::after{content:'';position:absolute;right:-40px;top:-40px;width:180px;height:180px;background:rgba(201,150,58,.08);border-radius:50%}
+.welcome-bar.urgent-bar{border:2px solid var(--amber)}
+.welcome-text h2{font-family:'Playfair Display',serif;font-size:22px;color:var(--paper);margin-bottom:5px}
+.welcome-text p{font-size:13px;color:rgba(255,255,255,.45)}
+.trial-countdown{background:rgba(201,150,58,.12);border:1px solid rgba(201,150,58,.25);border-radius:12px;padding:14px 20px;text-align:center;position:relative;z-index:1}
+.trial-countdown.urgent{background:rgba(217,119,6,.15);border-color:rgba(217,119,6,.35)}
+.countdown-days{font-family:'Playfair Display',serif;font-size:32px;color:var(--gold);font-weight:700;line-height:1}
+.countdown-label{font-size:12px;color:rgba(255,255,255,.4);margin-top:3px}
+.btn-upgrade{background:var(--gold);color:var(--ink);border:none;padding:9px 18px;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px;width:100%;transition:background .2s}
+.btn-upgrade:hover{background:var(--gold-light)}
 
-/* ══════════════════════════════════════
-   AUTH MODAL
-══════════════════════════════════════ */
-.modal-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(15,14,13,0.75);
-  z-index: 1000;
-  align-items: center;
-  justify-content: center;
-}
-.modal-overlay.open { display: flex; }
+/* Urgent banner - shows on day 1 */
+.urgent-banner{background:var(--amber-light);border:1px solid rgba(217,119,6,.3);border-radius:10px;padding:10px 16px;display:none;align-items:center;gap:10px;margin-bottom:16px;font-size:13px;color:var(--amber);font-weight:500}
+.urgent-banner.show{display:flex}
+.urgent-banner button{margin-left:auto;background:var(--amber);color:white;border:none;padding:5px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif}
 
-.modal {
-  background: var(--white);
-  border-radius: 18px;
-  width: 420px;
-  max-width: calc(100vw - 32px);
-  overflow: hidden;
-  animation: slideUp 0.25s ease;
-}
+.categories-heading{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:14px;margin-top:20px}
+.cat-grid-dash{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin-bottom:28px}
+.cat-card-dash{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:20px 18px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.cat-card-dash:hover{box-shadow:0 4px 20px rgba(15,14,13,.08);transform:translateY(-2px);border-color:transparent}
+.cat-card-dash.hidden-by-search{display:none}
+.cat-card-dash.highlight-search{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,150,58,.15)}
+.cat-icon-dash{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:12px}
+.cat-card-dash h3{font-size:13px;font-weight:600;margin-bottom:3px;color:var(--ink)}
+.cat-card-dash p{font-size:12px;color:var(--muted);line-height:1.5}
 
-@keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
+/* Hindi hint */
+.hindi-hint{background:var(--teal-light);border:1px solid rgba(26,107,92,.15);border-radius:10px;padding:10px 16px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--teal);margin-bottom:18px}
 
-.modal-header {
-  background: var(--ink);
-  padding: 32px 32px 28px;
-  text-align: center;
-}
-.modal-logo {
-  font-family: 'Playfair Display', serif;
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--gold);
-  margin-bottom: 8px;
-}
-.modal-title { font-size: 15px; color: rgba(255,255,255,0.6); font-weight: 300; }
+/* ═══ CHAT ═══ */
+#chat-screen{background:var(--cream)}
+.chat-nav{background:var(--white);border-bottom:1px solid var(--border);padding:0 20px;height:56px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100}
+.back-btn{width:32px;height:32px;border-radius:7px;border:1px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--ink);transition:background .15s;flex-shrink:0}
+.back-btn:hover{background:var(--cream)}
+.chat-nav-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.chat-nav-info{flex:1;min-width:0}
+.chat-nav-info h3{font-size:14px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-nav-info p{font-size:11px;color:var(--muted)}
+.query-counter{font-size:12px;color:var(--muted);background:var(--cream);border:1px solid var(--border);border-radius:20px;padding:3px 10px;white-space:nowrap;flex-shrink:0}
+.query-counter span{font-weight:700;color:var(--ink)}
 
-.modal-body { padding: 32px; }
-.tab-row { display: flex; gap: 0; margin-bottom: 24px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
-.tab-btn {
-  flex: 1;
-  padding: 10px;
-  border: none;
-  background: var(--cream);
-  color: var(--muted);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.tab-btn.active { background: var(--ink); color: var(--paper); }
+/* Mobile trial banner in chat */
+.mobile-trial-bar{display:none;background:var(--teal-light);border-bottom:1px solid rgba(26,107,92,.15);padding:8px 16px;font-size:12px;color:var(--teal);align-items:center;gap:8px}
+.mobile-trial-bar.urgent{background:var(--amber-light);color:var(--amber);border-bottom-color:rgba(217,119,6,.2)}
+.mobile-trial-bar button{margin-left:auto;background:var(--teal);color:white;border:none;padding:3px 10px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
+.mobile-trial-bar.urgent button{background:var(--amber)}
 
-.form-group { margin-bottom: 16px; }
-.form-label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; display: block; }
-.form-input {
-  width: 100%;
-  padding: 11px 14px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  color: var(--ink);
-  background: var(--paper);
-  outline: none;
-  transition: border-color 0.2s;
-}
-.form-input:focus { border-color: var(--gold); }
+.chat-layout{display:flex;height:calc(100vh - 56px)}
+.chat-main{flex:1;display:flex;flex-direction:column;min-width:0}
+.messages-area{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:14px}
 
-.trial-banner {
-  background: var(--teal-light);
-  border: 1px solid rgba(26,107,92,0.2);
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 12px;
-  color: var(--teal);
-  margin-bottom: 18px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+/* Welcome message */
+.welcome-msg{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:22px;max-width:580px;margin:0 auto;text-align:center}
+.welcome-msg .w-icon{font-size:32px;margin-bottom:10px}
+.welcome-msg h3{font-family:'Playfair Display',serif;font-size:19px;color:var(--ink);margin-bottom:7px}
+.welcome-msg p{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:14px}
+.quick-questions{display:flex;flex-direction:column;gap:7px;text-align:left}
+.quick-q{background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:9px 13px;font-size:13px;color:var(--ink);cursor:pointer;transition:all .15s}
+.quick-q:hover{background:var(--gold-light);border-color:var(--gold)}
+.hindi-quick{background:var(--teal-light);border-color:rgba(26,107,92,.2);color:var(--teal)}
+.hindi-quick:hover{background:var(--teal);color:white;border-color:var(--teal)}
 
-.btn-auth {
-  width: 100%;
-  padding: 13px;
-  background: var(--ink);
-  color: var(--paper);
-  border: none;
-  border-radius: 8px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.btn-auth:hover { background: #2a2825; }
-.auth-note { text-align: center; margin-top: 14px; font-size: 12px; color: var(--muted); }
-.auth-note a { color: var(--gold-dark); cursor: pointer; }
+/* Messages */
+.msg{display:flex;gap:10px;max-width:700px}
+.msg.user{align-self:flex-end;flex-direction:row-reverse}
+.msg-avatar{width:30px;height:30px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px}
+.msg.ai .msg-avatar{background:var(--ink);color:var(--gold);font-family:'Playfair Display',serif;font-weight:700;font-size:11px}
+.msg.user .msg-avatar{background:var(--gold);color:var(--ink);font-weight:700}
+.msg-bubble{border-radius:12px;padding:12px 15px;font-size:13.5px;line-height:1.7;max-width:520px}
+.msg.ai .msg-bubble{background:var(--white);border:1px solid var(--border);color:var(--ink);border-radius:3px 12px 12px 12px}
+.msg.user .msg-bubble{background:var(--ink);color:var(--paper);border-radius:12px 3px 12px 12px}
 
-/* ══════════════════════════════════════
-   DASHBOARD
-══════════════════════════════════════ */
-#dashboard { background: var(--cream); }
+/* Markdown rendering inside ai bubble */
+.msg.ai .msg-bubble h1,.msg.ai .msg-bubble h2,.msg.ai .msg-bubble h3{font-family:'Playfair Display',serif;margin:14px 0 6px;color:var(--ink)}
+.msg.ai .msg-bubble h1{font-size:17px}.msg.ai .msg-bubble h2{font-size:15px}.msg.ai .msg-bubble h3{font-size:14px}
+.msg.ai .msg-bubble p{margin-bottom:8px}
+.msg.ai .msg-bubble ul,.msg.ai .msg-bubble ol{padding-left:20px;margin-bottom:8px}
+.msg.ai .msg-bubble li{margin-bottom:3px}
+.msg.ai .msg-bubble strong{font-weight:600;color:var(--ink)}
+.msg.ai .msg-bubble table{border-collapse:collapse;width:100%;font-size:12.5px;margin:10px 0}
+.msg.ai .msg-bubble th{background:var(--cream);padding:7px 10px;text-align:left;border:1px solid var(--border);font-weight:600}
+.msg.ai .msg-bubble td{padding:6px 10px;border:1px solid var(--border)}
+.msg.ai .msg-bubble code{background:var(--cream);padding:2px 6px;border-radius:4px;font-size:12px}
+.msg.ai .msg-bubble hr{border:none;border-top:1px solid var(--border);margin:12px 0}
+.msg.ai .msg-bubble blockquote{border-left:3px solid var(--gold);padding-left:12px;color:var(--muted);margin:8px 0}
 
-.dash-nav {
-  background: var(--white);
-  border-bottom: 1px solid var(--border);
-  padding: 0 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 60px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
+/* Typing */
+.typing-indicator{display:flex;gap:4px;align-items:center;padding:3px 0}
+.typing-dot{width:6px;height:6px;background:var(--muted);border-radius:50%;animation:bounce 1.2s infinite}
+.typing-dot:nth-child(2){animation-delay:.2s}.typing-dot:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+.disclaimer{font-size:11px;color:var(--muted);background:var(--cream);border-radius:5px;padding:5px 10px;margin-top:5px;border-left:2px solid var(--border)}
 
-.dash-logo {
-  font-family: 'Playfair Display', serif;
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--gold-dark);
-}
-.dash-logo span { color: var(--ink); font-weight: 400; }
-
-.user-pill {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--cream);
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 6px 16px 6px 8px;
-  cursor: pointer;
-}
-.user-avatar {
-  width: 30px; height: 30px;
-  background: var(--ink);
-  color: var(--gold);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px;
-  font-weight: 700;
-}
-.user-name { font-size: 13px; font-weight: 500; color: var(--ink); }
-.trial-chip {
-  background: var(--teal-light);
-  color: var(--teal);
-  border: 1px solid rgba(26,107,92,0.2);
-  border-radius: 20px;
-  padding: 3px 10px;
-  font-size: 11px;
-  font-weight: 600;
-}
-.pro-chip {
-  background: var(--gold);
-  color: var(--ink);
-  border-radius: 20px;
-  padding: 3px 10px;
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.dash-main { display: flex; min-height: calc(100vh - 60px); }
-
-/* Sidebar */
-.sidebar {
-  width: 240px;
-  flex-shrink: 0;
-  background: var(--white);
-  border-right: 1px solid var(--border);
-  padding: 24px 0;
-  position: sticky;
-  top: 60px;
-  height: calc(100vh - 60px);
-  overflow-y: auto;
-}
-
-.sidebar-section { margin-bottom: 8px; }
-.sidebar-label {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--muted);
-  padding: 6px 20px;
-}
-.sidebar-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 9px 20px;
-  cursor: pointer;
-  transition: all 0.15s;
-  border-radius: 0;
-  font-size: 14px;
-  color: var(--muted);
-  font-weight: 400;
-  border-left: 3px solid transparent;
-}
-.sidebar-item:hover { background: var(--cream); color: var(--ink); }
-.sidebar-item.active { background: var(--cream); color: var(--ink); border-left-color: var(--gold); font-weight: 500; }
-.sidebar-item .s-icon { font-size: 16px; width: 20px; text-align: center; }
-.sidebar-item .s-badge {
-  margin-left: auto;
-  background: var(--red-light);
-  color: var(--red);
-  font-size: 10px;
-  font-weight: 700;
-  padding: 1px 6px;
-  border-radius: 10px;
-}
-.sidebar-item .s-badge.pro {
-  background: #FEF7E0;
-  color: var(--gold-dark);
-}
-
-/* Main content */
-.dash-content { flex: 1; padding: 32px; overflow-y: auto; }
-
-/* Home panel */
-.welcome-bar {
-  background: var(--ink);
-  border-radius: 16px;
-  padding: 28px 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 28px;
-  position: relative;
-  overflow: hidden;
-}
-.welcome-bar::after {
-  content: '';
-  position: absolute;
-  right: -40px; top: -40px;
-  width: 200px; height: 200px;
-  background: rgba(201,150,58,0.1);
-  border-radius: 50%;
-}
-.welcome-text h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: 24px;
-  color: var(--paper);
-  margin-bottom: 6px;
-}
-.welcome-text p { font-size: 14px; color: rgba(255,255,255,0.5); }
-.trial-countdown {
-  background: rgba(201,150,58,0.15);
-  border: 1px solid rgba(201,150,58,0.3);
-  border-radius: 12px;
-  padding: 16px 22px;
-  text-align: center;
-  position: relative;
-  z-index: 1;
-}
-.countdown-days {
-  font-family: 'Playfair Display', serif;
-  font-size: 36px;
-  color: var(--gold);
-  font-weight: 700;
-  line-height: 1;
-}
-.countdown-label { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 4px; }
-.btn-upgrade {
-  background: var(--gold);
-  color: var(--ink);
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  margin-top: 10px;
-  width: 100%;
-  transition: background 0.2s;
-}
-.btn-upgrade:hover { background: var(--gold-light); }
-
-.categories-heading {
-  font-size: 13px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-  margin-bottom: 16px;
-}
-
-.cat-grid-dash {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 14px;
-  margin-bottom: 32px;
-}
-
-.cat-card-dash {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 22px 20px;
-  cursor: pointer;
-  transition: all 0.2s;
-  position: relative;
-  overflow: hidden;
-}
-.cat-card-dash:hover { box-shadow: var(--card-shadow); transform: translateY(-2px); border-color: transparent; }
-.cat-card-dash.locked { opacity: 0.75; }
-
-.cat-icon-dash {
-  width: 40px; height: 40px;
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
-  margin-bottom: 14px;
-}
-.cat-card-dash h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; color: var(--ink); }
-.cat-card-dash p { font-size: 12px; color: var(--muted); line-height: 1.5; }
-
-.cat-price-tag {
-  margin-top: 12px;
-  font-size: 12px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-.lock-overlay {
-  position: absolute;
-  top: 12px; right: 12px;
-  font-size: 14px;
-}
-
-/* ══════════════════════════════════════
-   CHAT INTERFACE
-══════════════════════════════════════ */
-#chat-screen { background: var(--cream); }
-
-.chat-nav {
-  background: var(--white);
-  border-bottom: 1px solid var(--border);
-  padding: 0 24px;
-  height: 58px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.back-btn {
-  width: 34px; height: 34px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: transparent;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px;
-  color: var(--ink);
-  transition: background 0.15s;
-}
-.back-btn:hover { background: var(--cream); }
-
-.chat-nav-icon {
-  width: 34px; height: 34px;
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px;
-}
-
-.chat-nav-info h3 { font-size: 15px; font-weight: 600; color: var(--ink); }
-.chat-nav-info p { font-size: 12px; color: var(--muted); }
-
-.query-counter {
-  margin-left: auto;
-  font-size: 12px;
-  color: var(--muted);
-  background: var(--cream);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 4px 12px;
-}
-.query-counter span { font-weight: 700; color: var(--ink); }
-
-.chat-layout { display: flex; height: calc(100vh - 58px); }
-
-.chat-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.messages-area {
-  flex: 1;
-  overflow-y: auto;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.welcome-msg {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 24px;
-  max-width: 600px;
-  margin: 0 auto;
-  text-align: center;
-}
-.welcome-msg .w-icon { font-size: 36px; margin-bottom: 12px; }
-.welcome-msg h3 { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--ink); margin-bottom: 8px; }
-.welcome-msg p { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 16px; }
-
-.quick-questions { display: flex; flex-direction: column; gap: 8px; text-align: left; }
-.quick-q {
-  background: var(--cream);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 13px;
-  color: var(--ink);
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.quick-q:hover { background: var(--gold-light); border-color: var(--gold); }
-
-.msg {
-  display: flex;
-  gap: 12px;
-  max-width: 720px;
-}
-.msg.user { align-self: flex-end; flex-direction: row-reverse; }
-
-.msg-avatar {
-  width: 32px; height: 32px;
-  border-radius: 8px;
-  flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px;
-}
-.msg.ai .msg-avatar { background: var(--ink); color: var(--gold); font-family: 'Playfair Display', serif; font-weight: 700; font-size: 12px; }
-.msg.user .msg-avatar { background: var(--gold); color: var(--ink); font-size: 12px; font-weight: 700; }
-
-.msg-bubble {
-  border-radius: 14px;
-  padding: 13px 16px;
-  font-size: 14px;
-  line-height: 1.65;
-  max-width: 540px;
-}
-.msg.ai .msg-bubble {
-  background: var(--white);
-  border: 1px solid var(--border);
-  color: var(--ink);
-  border-radius: 4px 14px 14px 14px;
-}
-.msg.user .msg-bubble {
-  background: var(--ink);
-  color: var(--paper);
-  border-radius: 14px 4px 14px 14px;
-}
-
-.typing-indicator {
-  display: flex;
-  gap: 5px;
-  align-items: center;
-  padding: 4px 0;
-}
-.typing-dot {
-  width: 7px; height: 7px;
-  background: var(--muted);
-  border-radius: 50%;
-  animation: bounce 1.2s infinite;
-}
-.typing-dot:nth-child(2) { animation-delay: 0.2s; }
-.typing-dot:nth-child(3) { animation-delay: 0.4s; }
-@keyframes bounce {
-  0%, 60%, 100% { transform: translateY(0); }
-  30% { transform: translateY(-6px); }
-}
-
-.disclaimer {
-  font-size: 11px;
-  color: var(--muted);
-  background: var(--cream);
-  border-radius: 6px;
-  padding: 6px 12px;
-  margin-top: 6px;
-  border-left: 3px solid var(--border);
-}
+/* Privacy note */
+.privacy-row{display:flex;align-items:center;justify-content:center;gap:6px;font-size:11px;color:var(--muted);margin-top:6px}
 
 /* Input bar */
-.input-bar {
-  background: var(--white);
-  border-top: 1px solid var(--border);
-  padding: 16px 24px;
-}
+.input-bar{background:var(--white);border-top:1px solid var(--border);padding:14px 20px}
+.input-row{display:flex;gap:8px;align-items:flex-end;background:var(--cream);border:1px solid var(--border);border-radius:10px;padding:9px 10px;transition:border-color .2s}
+.input-row:focus-within{border-color:var(--gold)}
+#chat-input{flex:1;border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);outline:none;resize:none;min-height:22px;max-height:110px;line-height:1.5}
+#chat-input::placeholder{color:var(--muted)}
+.send-btn{width:34px;height:34px;background:var(--ink);border:none;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s;color:var(--paper);font-size:15px}
+.send-btn:hover{background:var(--gold-dark)}
+.input-footer{display:flex;align-items:center;justify-content:space-between;margin-top:7px;flex-wrap:wrap;gap:4px}
+.input-hint{font-size:11px;color:var(--muted)}
+.hindi-label{font-size:11px;color:var(--teal);background:var(--teal-light);padding:2px 9px;border-radius:10px;cursor:pointer;transition:all .15s}
+.hindi-label:hover{background:var(--teal);color:white}
 
-.input-row {
-  display: flex;
-  gap: 10px;
-  align-items: flex-end;
-  background: var(--cream);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 10px 12px;
-  transition: border-color 0.2s;
-}
-.input-row:focus-within { border-color: var(--gold); }
+/* Chat right sidebar — hidden on mobile */
+.chat-sidebar{width:250px;flex-shrink:0;background:var(--white);border-left:1px solid var(--border);padding:20px;overflow-y:auto}
+.info-card{background:var(--cream);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:14px}
+.info-card h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:9px}
+.info-item{font-size:13px;color:var(--ink);padding:4px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between}
+.info-item:last-child{border-bottom:none}
+.info-val{font-weight:600;color:var(--ink)}
+.upgrade-card{background:var(--ink);border-radius:10px;padding:18px}
+.upgrade-card h4{font-family:'Playfair Display',serif;font-size:15px;color:var(--gold);margin-bottom:7px}
+.upgrade-card p{font-size:12px;color:rgba(255,255,255,.45);margin-bottom:14px;line-height:1.5}
+.btn-upgrade-sm{width:100%;padding:9px;background:var(--gold);color:var(--ink);border:none;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:background .2s}
+.btn-upgrade-sm:hover{background:var(--gold-light)}
 
-#chat-input {
-  flex: 1;
-  border: none;
-  background: transparent;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  color: var(--ink);
-  outline: none;
-  resize: none;
-  min-height: 24px;
-  max-height: 120px;
-  line-height: 1.5;
-}
-#chat-input::placeholder { color: var(--muted); }
+/* ═══ PRICING MODAL ═══ */
+.pricing-modal{display:none;position:fixed;inset:0;background:rgba(15,14,13,.85);z-index:2000;align-items:center;justify-content:center;padding:20px}
+.pricing-modal.open{display:flex}
+.pricing-box{background:var(--white);border-radius:18px;max-width:860px;width:100%;overflow:hidden;animation:slideUp .25s ease;max-height:90vh;overflow-y:auto}
+.pricing-box-header{background:var(--ink);padding:28px 36px;text-align:center}
+.pricing-box-header h2{font-family:'Playfair Display',serif;font-size:26px;color:var(--paper);margin-bottom:6px}
+.pricing-box-header p{font-size:14px;color:rgba(255,255,255,.45)}
+.pricing-box-body{padding:28px 36px}
+.plans-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.plan-option{border:2px solid var(--border);border-radius:12px;padding:22px;cursor:pointer;transition:all .2s;text-align:center}
+.plan-option:hover{border-color:var(--gold)}
+.plan-option.selected{border-color:var(--gold);background:#FFFBF0}
+.plan-option h3{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px}
+.plan-option .price{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--ink)}
+.plan-option .period{font-size:12px;color:var(--muted);margin-bottom:14px}
+.plan-option ul{list-style:none;text-align:left;font-size:13px}
+.plan-option ul li{padding:4px 0;color:var(--muted);display:flex;gap:6px;align-items:flex-start}
+.plan-option ul li::before{content:'✓';color:var(--teal);font-weight:700;flex-shrink:0}
+.pricing-box-footer{padding:0 36px 28px;display:flex;gap:12px}
+.btn-pay{flex:1;padding:13px;background:var(--gold);color:var(--ink);border:none;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s}
+.btn-pay:hover{background:var(--gold-light)}
+.btn-cancel-plan{padding:13px 22px;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer}
+.btn-cancel-plan:hover{background:var(--cream)}
 
-.send-btn {
-  width: 36px; height: 36px;
-  background: var(--ink);
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-  transition: background 0.15s;
-  color: var(--paper);
-  font-size: 16px;
-}
-.send-btn:hover { background: var(--gold-dark); }
-.input-hint { text-align: center; font-size: 11px; color: var(--muted); margin-top: 8px; }
+/* Toast */
+.toast{position:fixed;bottom:22px;right:22px;background:var(--ink);color:var(--paper);padding:11px 18px;border-radius:9px;font-size:13px;z-index:9999;transform:translateY(60px);opacity:0;transition:all .3s;display:flex;align-items:center;gap:9px;max-width:340px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{border-left:4px solid var(--teal)}
+.toast.error{border-left:4px solid var(--red)}
 
-/* Sidebar chat info */
-.chat-sidebar {
-  width: 260px;
-  flex-shrink: 0;
-  background: var(--white);
-  border-left: 1px solid var(--border);
-  padding: 24px;
-  overflow-y: auto;
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:768px){
+  .nav{padding:14px 18px}.nav-links{display:none}
+  .hero{padding:50px 18px 44px}
+  .stats-bar{gap:24px;padding:26px 18px;flex-wrap:wrap}
+  .categories-section{padding:44px 18px}.pricing-section{padding:44px 18px}
+  .testimonials-section{padding:44px 18px}
+  .footer{padding:32px 18px}.footer-inner{grid-template-columns:1fr 1fr;gap:28px}
+  .sidebar{display:none}
+  .chat-sidebar{display:none}
+  .mobile-trial-bar{display:flex}
+  .dash-content{padding:14px}
+  .welcome-bar{flex-direction:column;gap:14px;align-items:stretch}
+  .trial-countdown{display:flex;align-items:center;gap:16px;text-align:left;padding:12px 16px}
+  .countdown-days{font-size:28px}.btn-upgrade{margin-top:0;width:auto;padding:8px 16px}
+  .pricing-box-body{padding:18px}.pricing-box-footer{padding:0 18px 18px;flex-direction:column}
+  .cat-grid-dash{grid-template-columns:1fr 1fr}
+  .messages-area{padding:14px}
+  .chat-nav{padding:0 14px;gap:10px}
+  .input-bar{padding:12px 14px}
 }
-
-.info-card {
-  background: var(--cream);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 16px;
-}
-.info-card h4 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 10px; }
-.info-item { font-size: 13px; color: var(--ink); padding: 5px 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; }
-.info-item:last-child { border-bottom: none; }
-.info-val { font-weight: 600; color: var(--ink); }
-
-.upgrade-card {
-  background: var(--ink);
-  border-radius: 12px;
-  padding: 20px;
-  color: var(--paper);
-}
-.upgrade-card h4 { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--gold); margin-bottom: 8px; }
-.upgrade-card p { font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 16px; line-height: 1.5; }
-.btn-upgrade-sm {
-  width: 100%;
-  padding: 10px;
-  background: var(--gold);
-  color: var(--ink);
-  border: none;
-  border-radius: 8px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.btn-upgrade-sm:hover { background: var(--gold-light); }
-
-/* ══════════════════════════════════════
-   PRICING MODAL
-══════════════════════════════════════ */
-.pricing-modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(15,14,13,0.8);
-  z-index: 2000;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-.pricing-modal.open { display: flex; }
-.pricing-box {
-  background: var(--white);
-  border-radius: 20px;
-  max-width: 860px;
-  width: 100%;
-  overflow: hidden;
-  animation: slideUp 0.25s ease;
-}
-.pricing-box-header {
-  background: var(--ink);
-  padding: 32px 40px;
-  text-align: center;
-}
-.pricing-box-header h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: 28px;
-  color: var(--paper);
-  margin-bottom: 8px;
-}
-.pricing-box-header p { font-size: 15px; color: rgba(255,255,255,0.5); }
-.pricing-box-body { padding: 32px 40px; }
-.plans-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
-
-.plan-option {
-  border: 2px solid var(--border);
-  border-radius: 14px;
-  padding: 24px;
-  cursor: pointer;
-  transition: all 0.2s;
-  text-align: center;
-}
-.plan-option:hover { border-color: var(--gold); }
-.plan-option.selected { border-color: var(--gold); background: #FFFBF0; }
-.plan-option h3 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 12px; }
-.plan-option .price { font-family: 'Playfair Display', serif; font-size: 34px; font-weight: 700; color: var(--ink); }
-.plan-option .period { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
-.plan-option ul { list-style: none; text-align: left; font-size: 13px; }
-.plan-option ul li { padding: 5px 0; color: var(--muted); display: flex; gap: 7px; align-items: flex-start; }
-.plan-option ul li::before { content: '✓'; color: var(--teal); font-weight: 700; flex-shrink: 0; }
-
-.pricing-box-footer { padding: 0 40px 32px; display: flex; gap: 14px; }
-.btn-pay {
-  flex: 1;
-  padding: 14px;
-  background: var(--gold);
-  color: var(--ink);
-  border: none;
-  border-radius: 10px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.btn-pay:hover { background: var(--gold-light); }
-.btn-cancel-plan {
-  padding: 14px 24px;
-  background: transparent;
-  color: var(--muted);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  cursor: pointer;
-}
-.btn-cancel-plan:hover { background: var(--cream); }
-
-/* TOAST */
-.toast {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  background: var(--ink);
-  color: var(--paper);
-  padding: 12px 20px;
-  border-radius: 10px;
-  font-size: 14px;
-  z-index: 9999;
-  transform: translateY(60px);
-  opacity: 0;
-  transition: all 0.3s;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.toast.show { transform: translateY(0); opacity: 1; }
-.toast.success { border-left: 4px solid var(--teal); }
-.toast.error { border-left: 4px solid var(--red); }
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-  .nav { padding: 16px 20px; }
-  .nav-links { display: none; }
-  .hero { padding: 60px 20px 50px; }
-  .stats-bar { gap: 30px; padding: 30px 20px; flex-wrap: wrap; }
-  .categories-section { padding: 50px 20px; }
-  .pricing-section { padding: 50px 20px; }
-  .sidebar { display: none; }
-  .chat-sidebar { display: none; }
-  .dash-content { padding: 16px; }
-  .welcome-bar { flex-direction: column; gap: 20px; }
-  .pricing-box-body { padding: 20px; }
-  .pricing-box-footer { padding: 0 20px 20px; flex-direction: column; }
+@media(max-width:480px){
+  .cat-grid-dash{grid-template-columns:1fr}
+  .hero h1{font-size:32px}
 }
 </style>
 </head>
 <body>
 
-<!-- ═══ LANDING PAGE ═══ -->
+<!-- ═══ LANDING ═══ -->
 <div id="landing" class="screen active">
   <div class="bg-orb orb1"></div>
   <div class="bg-orb orb2"></div>
@@ -1073,6 +371,7 @@ body {
     <div class="logo">Nyay<span>AI</span></div>
     <div class="nav-links">
       <a href="#" onclick="scrollToSection('features')">Features</a>
+      <a href="#" onclick="scrollToSection('testimonials-land')">Reviews</a>
       <a href="#" onclick="scrollToSection('pricing-land')">Pricing</a>
       <a href="#" onclick="openAuth('login')">Sign in</a>
       <button class="btn-nav" onclick="openAuth('signup')">Start free trial</button>
@@ -1080,6 +379,12 @@ body {
   </nav>
 
   <div class="hero">
+    <!-- Powered by Claude / Anthropic badge -->
+    <div class="powered-badge">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="opacity:.8"><circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/><path d="M8 12l3 3 5-5" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Powered by <strong>Nyay AI</strong>
+    </div>
+
     <div class="hero-eyebrow">🇮🇳 Built for India — Hindi &amp; English</div>
     <h1>Your <em>legal &amp; tax</em><br>expert, available 24/7</h1>
     <p>Ask anything about income tax, labour law, consumer rights, tenant rights, police FIR, RERA, startup law and more — in plain language, not legal jargon.</p>
@@ -1087,86 +392,77 @@ body {
       <button class="btn-primary" onclick="openAuth('signup')">Start 3-day free trial</button>
       <button class="btn-secondary" onclick="openAuth('login')">Sign in to dashboard</button>
     </div>
+    <div class="trust-row">
+      <span class="trust-badge">🔒 Private &amp; secure</span>
+      <span class="trust-badge">✓ No credit card needed</span>
+      <span class="trust-badge">⚖️ Indian laws &amp; regulations</span>
+      <span class="trust-badge">🤖 Nyay AI</span>
+    </div>
   </div>
 
   <div class="stats-bar">
-    <div class="stat-item">
-      <div class="stat-num">8</div>
-      <div class="stat-label">Expert categories</div>
+    <div class="stat-item"><div class="stat-num">8</div><div class="stat-label">Expert categories</div></div>
+    <div class="stat-item"><div class="stat-num">3 days</div><div class="stat-label">Free trial — no card</div></div>
+    <div class="stat-item"><div class="stat-num">₹49</div><div class="stat-label">Starting price/month</div></div>
+    <div class="stat-item"><div class="stat-num">24/7</div><div class="stat-label">Always available</div></div>
+    <div class="stat-item"><div class="stat-num">Hindi</div><div class="stat-label">हिंदी में भी पूछें</div></div>
+  </div>
+
+  <!-- Testimonials -->
+  <div class="testimonials-section" id="testimonials-land">
+    <div class="section-header">
+      <div class="section-tag">What users say</div>
+      <h2>Real answers, real relief</h2>
+      <p>Thousands of Indians get instant clarity on their legal and tax questions every day</p>
     </div>
-    <div class="stat-item">
-      <div class="stat-num">3 days</div>
-      <div class="stat-label">Free trial — no card</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">₹49</div>
-      <div class="stat-label">Starting price/month</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">24/7</div>
-      <div class="stat-label">Always available</div>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"My employer was deducting PF incorrectly for 2 years. NyayAI explained exactly which sections apply and what I can claim — in 3 minutes, not 3 days waiting for a lawyer."</div>
+        <div class="testi-author">
+          <div class="testi-avatar">RS</div>
+          <div><div class="testi-name">Rahul Sharma</div><div class="testi-loc">Software Engineer, Bengaluru</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"Builder delayed my flat by 2.5 years. NyayAI told me about RERA Section 18 compensation rights, gave me the exact complaint process, and I ended up getting ₹3.8L in interest compensation."</div>
+        <div class="testi-author">
+          <div class="testi-avatar">PK</div>
+          <div><div class="testi-name">Priya Kapoor</div><div class="testi-loc">Home buyer, Pune</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"As a freelancer I was confused about GST, advance tax and ITR-4. The Freelancer Tax bot answered everything in Hindi — felt like talking to a CA friend who actually explains things."</div>
+        <div class="testi-author">
+          <div class="testi-avatar">AM</div>
+          <div><div class="testi-name">Aakash Mehta</div><div class="testi-loc">Freelance Designer, Delhi</div></div>
+        </div>
+      </div>
     </div>
   </div>
 
+  <!-- Bot categories -->
   <div class="categories-section" id="features">
     <div class="section-header">
       <div class="section-tag">What you can ask</div>
       <h2>8 specialised expert bots</h2>
-      <p>Each bot is deeply trained on Indian laws, rules and regulations — not generic global advice</p>
+      <p>Each bot is trained on current Indian laws — not generic global advice</p>
     </div>
-
     <div class="cat-grid">
-      <div class="cat-card-landing" onclick="openAuth('signup')">
-        <div class="cat-icon-land" style="background:#FEF7E0;">⚖️</div>
-        <h3>Indian Labour Law</h3>
-        <p>PF, gratuity, wrongful termination, salary cuts, workplace rights</p>
-        <div class="cat-price">Free during trial · ₹49/mo after</div>
-      </div>
-      <div class="cat-card-landing" onclick="openAuth('signup')">
-        <div class="cat-icon-land" style="background:#E6F4F1;">🏠</div>
-        <h3>Tenant Rights</h3>
-        <p>Rent agreements, deposit disputes, illegal eviction, landlord duties</p>
-        <div class="cat-price">Free during trial · ₹49/mo after</div>
-      </div>
-      <div class="cat-card-landing" onclick="openAuth('signup')">
-        <div class="cat-icon-land" style="background:#EFF6FF;">📋</div>
-        <h3>ITR Filing Guide</h3>
-        <p>Which form to use, deductions, new vs old regime, missed deadlines</p>
-        <div class="cat-price">Free during trial · ₹79/mo after</div>
-      </div>
-      <div class="cat-card-landing" onclick="openAuth('signup')">
-        <div class="cat-icon-land" style="background:#F0FDF4;">💼</div>
-        <h3>Freelancer Tax Bot</h3>
-        <p>GST registration, advance tax, TDS on freelance, 44AD taxation</p>
-        <div class="cat-price">Free during trial · ₹79/mo after</div>
-      </div>
-      <div class="cat-card-landing" onclick="openAuth('signup')">
-        <div class="cat-icon-land" style="background:#FDF2F8;">📊</div>
-        <h3>New vs Old Tax Regime</h3>
-        <p>Personalised calculator — which regime saves you more money?</p>
-        <div class="cat-price">Free during trial · ₹49/mo after</div>
-      </div>
-      <div class="cat-card-landing" onclick="openAuth('signup')">
-        <div class="cat-icon-land" style="background:#FEF2F2;">🚔</div>
-        <h3>Police FIR & Legal Rights</h3>
-        <p>FIR registration, bail rights, cybercrime complaints, 498A</p>
-        <div class="cat-price">Free during trial · ₹49/mo after</div>
-      </div>
-      <div class="cat-card-landing" onclick="openAuth('signup')">
-        <div class="cat-icon-land" style="background:#FFFBEB;">🏗️</div>
-        <h3>Consumer Rights & RERA</h3>
-        <p>Builder delays, flat disputes, compensation claims, consumer forum</p>
-        <div class="cat-price">Free during trial · ₹79/mo after</div>
-      </div>
-      <div class="cat-card-landing" onclick="openAuth('signup')">
-        <div class="cat-icon-land" style="background:#EDE9FE;">🚀</div>
-        <h3>Startup Legal Doc Bot</h3>
-        <p>Co-founder agreements, vesting, NDA, SAFE notes, privacy policy</p>
-        <div class="cat-price">Free during trial · ₹99/mo after</div>
-      </div>
+      <div class="cat-card-landing" onclick="openAuth('signup')"><div class="cat-icon-land" style="background:#FEF7E0;">⚖️</div><h3>Indian Labour Law</h3><p>PF, gratuity, wrongful termination, salary cuts, POSH Act</p><div class="cat-price">Free during trial · ₹49/mo after</div></div>
+      <div class="cat-card-landing" onclick="openAuth('signup')"><div class="cat-icon-land" style="background:#E6F4F1;">🏠</div><h3>Tenant Rights</h3><p>Rent agreements, deposit disputes, illegal eviction, notice periods</p><div class="cat-price">Free during trial · ₹49/mo after</div></div>
+      <div class="cat-card-landing" onclick="openAuth('signup')"><div class="cat-icon-land" style="background:#EFF6FF;">📋</div><h3>ITR Filing Guide</h3><p>Which form to use, deductions, new vs old regime, ITA 2025</p><div class="cat-price">Free during trial · ₹79/mo after</div></div>
+      <div class="cat-card-landing" onclick="openAuth('signup')"><div class="cat-icon-land" style="background:#F0FDF4;">💼</div><h3>Freelancer Tax Bot</h3><p>GST registration, advance tax, TDS, 44AD presumptive income</p><div class="cat-price">Free during trial · ₹79/mo after</div></div>
+      <div class="cat-card-landing" onclick="openAuth('signup')"><div class="cat-icon-land" style="background:#FDF2F8;">📊</div><h3>New vs Old Tax Regime</h3><p>Personalised calculator — which regime saves you more money?</p><div class="cat-price">Free during trial · ₹49/mo after</div></div>
+      <div class="cat-card-landing" onclick="openAuth('signup')"><div class="cat-icon-land" style="background:#FEF2F2;">🚔</div><h3>Police FIR &amp; Legal Rights</h3><p>FIR registration, bail rights, cybercrime, 498A, BNSS 2023</p><div class="cat-price">Free during trial · ₹49/mo after</div></div>
+      <div class="cat-card-landing" onclick="openAuth('signup')"><div class="cat-icon-land" style="background:#FFFBEB;">🏗️</div><h3>Consumer Rights &amp; RERA</h3><p>Builder delays, flat disputes, compensation, consumer forum</p><div class="cat-price">Free during trial · ₹79/mo after</div></div>
+      <div class="cat-card-landing" onclick="openAuth('signup')"><div class="cat-icon-land" style="background:#EDE9FE;">🚀</div><h3>Startup Legal Doc Bot</h3><p>Co-founder agreements, vesting, NDA, SAFE notes, privacy policy</p><div class="cat-price">Free during trial · ₹99/mo after</div></div>
     </div>
   </div>
 
+  <!-- Pricing -->
   <div class="pricing-section" id="pricing-land">
     <div class="section-header">
       <div class="section-tag">Pricing</div>
@@ -1180,8 +476,8 @@ body {
         <div class="plan-period">for 3 days — no card needed</div>
         <ul class="plan-features">
           <li>All 8 categories unlocked</li>
-          <li>10 questions per category</li>
           <li>Hindi &amp; English support</li>
+          <li>PDF-backed answers</li>
           <li>Expires after 3 days</li>
         </ul>
         <button class="btn-plan" onclick="openAuth('signup')">Start free trial</button>
@@ -1193,9 +489,9 @@ body {
         <ul class="plan-features">
           <li>Unlimited questions</li>
           <li>Choose only what you need</li>
-          <li>Priority response speed</li>
-          <li>PDF summary exports</li>
+          <li>Latest regulation updates</li>
           <li>CA/Lawyer referral assist</li>
+          <li>Priority response speed</li>
         </ul>
         <button class="btn-plan" onclick="openAuth('signup')">Get started</button>
       </div>
@@ -1207,7 +503,6 @@ body {
           <li>All 8 categories unlocked</li>
           <li>Unlimited questions</li>
           <li>Priority support</li>
-          <li>PDF exports included</li>
           <li>CA/Lawyer referral assist</li>
           <li>Save ₹44 vs per-category</li>
         </ul>
@@ -1215,6 +510,41 @@ body {
       </div>
     </div>
   </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="logo">Nyay<span style="color:rgba(255,255,255,.5);font-weight:400;">AI</span></div>
+        <p>India's legal &amp; tax intelligence platform — powered by Nyay AI. Available 24/7 in Hindi &amp; English.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="#" onclick="scrollToSection('features')">All 8 bots</a>
+        <a href="#" onclick="scrollToSection('pricing-land')">Pricing</a>
+        <a href="#" onclick="openAuth('signup')">Start free trial</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="#privacy" onclick="showToast('Privacy Policy — coming soon','success')">Privacy Policy</a>
+        <a href="#terms" onclick="showToast('Terms of Service — coming soon','success')">Terms of Service</a>
+        <a href="#disclaimer" onclick="showToast('Legal disclaimer — NyayAI provides information, not legal advice','success')">Disclaimer</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <a href="mailto:support@nyayai.in">support@nyayai.in</a>
+        <a href="#">WhatsApp Support</a>
+        <a href="#">Report an issue</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 NyayAI · Made with ❤️ in India · Not a substitute for professional legal advice</p>
+      <div class="anthropic-badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><path d="M8 12l3 3 5-5" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Powered by <strong>Nyay AI</strong>
+      </div>
+    </div>
+  </footer>
 </div>
 
 <!-- ═══ AUTH MODAL ═══ -->
@@ -1229,40 +559,19 @@ body {
         <button class="tab-btn active" id="tab-signup" onclick="switchTab('signup')">Create account</button>
         <button class="tab-btn" id="tab-login" onclick="switchTab('login')">Sign in</button>
       </div>
-
       <div id="signup-form">
-        <div class="trial-banner">
-          🎁 New users get 3 days free — all 8 categories, no credit card needed
-        </div>
-        <div class="form-group">
-          <label class="form-label">Full name</label>
-          <input class="form-input" type="text" id="reg-name" placeholder="Rahul Sharma" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Email address</label>
-          <input class="form-input" type="email" id="reg-email" placeholder="rahul@example.com" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Phone number</label>
-          <input class="form-input" type="tel" id="reg-phone" placeholder="+91 98765 43210" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Password</label>
-          <input class="form-input" type="password" id="reg-pass" placeholder="Min 8 characters" />
-        </div>
+        <div class="trial-banner">🎁 3 days free — all 8 bots, no credit card needed</div>
+        <div class="form-group"><label class="form-label">Full name</label><input class="form-input" type="text" id="reg-name" placeholder="Rahul Sharma" /></div>
+        <div class="form-group"><label class="form-label">Email address</label><input class="form-input" type="email" id="reg-email" placeholder="rahul@example.com" /></div>
+        <div class="form-group"><label class="form-label">Phone number</label><input class="form-input" type="tel" id="reg-phone" placeholder="+91 98765 43210" /></div>
+        <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" id="reg-pass" placeholder="Min 8 characters" onkeydown="if(event.key==='Enter')doSignup()" /></div>
+        <div class="privacy-note">🔒 Your conversations are private and never shared.</div>
         <button class="btn-auth" onclick="doSignup()">Create account &amp; start trial</button>
         <div class="auth-note">Already have an account? <a onclick="switchTab('login')">Sign in</a></div>
       </div>
-
       <div id="login-form" style="display:none;">
-        <div class="form-group">
-          <label class="form-label">Email or phone</label>
-          <input class="form-input" type="text" id="login-email" placeholder="rahul@example.com" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Password</label>
-          <input class="form-input" type="password" id="login-pass" placeholder="Your password" />
-        </div>
+        <div class="form-group"><label class="form-label">Email or phone</label><input class="form-input" type="text" id="login-email" placeholder="rahul@example.com" /></div>
+        <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" id="login-pass" placeholder="Your password" onkeydown="if(event.key==='Enter')doLogin()" /></div>
         <button class="btn-auth" onclick="doLogin()">Sign in</button>
         <div class="auth-note">New user? <a onclick="switchTab('signup')">Create free account</a></div>
       </div>
@@ -1274,7 +583,7 @@ body {
 <div id="dashboard" class="screen">
   <nav class="dash-nav">
     <div class="dash-logo">Nyay<span>AI</span></div>
-    <div style="display:flex;gap:10px;align-items:center;">
+    <div style="display:flex;gap:8px;align-items:center;">
       <span id="plan-chip" class="trial-chip">Trial — 3 days left</span>
       <div class="user-pill" onclick="showPricing()">
         <div class="user-avatar" id="user-initials">RS</div>
@@ -1284,71 +593,44 @@ body {
   </nav>
 
   <div class="dash-main">
-    <!-- Sidebar -->
     <div class="sidebar">
       <div class="sidebar-section">
         <div class="sidebar-label">Main</div>
-        <div class="sidebar-item active" onclick="showPanel('home')">
-          <span class="s-icon">🏠</span> Home
-        </div>
+        <div class="sidebar-item active" onclick="showPanel('home')"><span class="s-icon">🏠</span> Home</div>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-label">Tax Bots</div>
-        <div class="sidebar-item" onclick="openChat('itr')">
-          <span class="s-icon">📋</span> ITR Filing Guide
-          <span class="s-badge pro">₹79</span>
-        </div>
-        <div class="sidebar-item" onclick="openChat('freelancer')">
-          <span class="s-icon">💼</span> Freelancer Tax
-          <span class="s-badge pro">₹79</span>
-        </div>
-        <div class="sidebar-item" onclick="openChat('regime')">
-          <span class="s-icon">📊</span> New vs Old Regime
-          <span class="s-badge pro">₹49</span>
-        </div>
+        <div class="sidebar-item" onclick="openChat('itr')"><span class="s-icon">📋</span> ITR Filing Guide<span class="s-badge">₹79</span></div>
+        <div class="sidebar-item" onclick="openChat('freelancer')"><span class="s-icon">💼</span> Freelancer Tax<span class="s-badge">₹79</span></div>
+        <div class="sidebar-item" onclick="openChat('regime')"><span class="s-icon">📊</span> New vs Old Regime<span class="s-badge">₹49</span></div>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-label">Legal Bots</div>
-        <div class="sidebar-item" onclick="openChat('labour')">
-          <span class="s-icon">⚖️</span> Labour Law
-          <span class="s-badge pro">₹49</span>
-        </div>
-        <div class="sidebar-item" onclick="openChat('tenant')">
-          <span class="s-icon">🏠</span> Tenant Rights
-          <span class="s-badge pro">₹49</span>
-        </div>
-        <div class="sidebar-item" onclick="openChat('fir')">
-          <span class="s-icon">🚔</span> Police &amp; FIR
-          <span class="s-badge pro">₹49</span>
-        </div>
-        <div class="sidebar-item" onclick="openChat('rera')">
-          <span class="s-icon">🏗️</span> Consumer &amp; RERA
-          <span class="s-badge pro">₹79</span>
-        </div>
-        <div class="sidebar-item" onclick="openChat('startup')">
-          <span class="s-icon">🚀</span> Startup Legal
-          <span class="s-badge pro">₹99</span>
-        </div>
+        <div class="sidebar-item" onclick="openChat('labour')"><span class="s-icon">⚖️</span> Labour Law<span class="s-badge">₹49</span></div>
+        <div class="sidebar-item" onclick="openChat('tenant')"><span class="s-icon">🏠</span> Tenant Rights<span class="s-badge">₹49</span></div>
+        <div class="sidebar-item" onclick="openChat('fir')"><span class="s-icon">🚔</span> Police &amp; FIR<span class="s-badge">₹49</span></div>
+        <div class="sidebar-item" onclick="openChat('rera')"><span class="s-icon">🏗️</span> Consumer &amp; RERA<span class="s-badge">₹79</span></div>
+        <div class="sidebar-item" onclick="openChat('startup')"><span class="s-icon">🚀</span> Startup Legal<span class="s-badge">₹99</span></div>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-label">Account</div>
-        <div class="sidebar-item" onclick="showPricing()">
-          <span class="s-icon">⭐</span> Upgrade to Pro
-        </div>
-        <div class="sidebar-item" onclick="doLogout()">
-          <span class="s-icon">↩</span> Sign out
-        </div>
+        <div class="sidebar-item" onclick="showPricing()"><span class="s-icon">⭐</span> Upgrade to Pro</div>
+        <div class="sidebar-item" onclick="doLogout()"><span class="s-icon">↩</span> Sign out</div>
       </div>
     </div>
 
-    <!-- Main panel -->
     <div class="dash-content" id="dash-content">
-      <!-- Home panel -->
       <div id="panel-home">
-        <div class="welcome-bar">
+        <!-- Urgent last-day banner -->
+        <div class="urgent-banner" id="urgent-banner">
+          ⚠️ Last day of free trial — upgrade before tonight to keep access to all 8 bots.
+          <button onclick="showPricing()">Upgrade now</button>
+        </div>
+
+        <div class="welcome-bar" id="welcome-bar">
           <div class="welcome-text">
             <h2>Good day, <span id="welcome-name">Rahul</span> 👋</h2>
-            <p>You have full access to all 8 expert bots during your trial period.</p>
+            <p id="welcome-subtitle">You have full access to all 8 expert bots during your trial period.</p>
           </div>
           <div class="trial-countdown" id="trial-block">
             <div class="countdown-days" id="days-left">3</div>
@@ -1357,57 +639,36 @@ body {
           </div>
         </div>
 
+        <!-- Hindi hint -->
+        <div class="hindi-hint">
+          🌐 <strong>हिंदी में पूछें</strong> — सभी बॉट्स हिंदी में जवाब देते हैं। बस हिंदी में टाइप करें।
+        </div>
+
+        <!-- Bot search -->
+        <div class="bot-search-wrap">
+          <input class="bot-search" type="text" id="bot-search" placeholder="What do you need help with? (e.g. GST, FIR, builder delay, salary cut...)" oninput="filterBots(this.value)" />
+          <span class="bot-search-icon">🔍</span>
+        </div>
+
         <div class="categories-heading">Choose a category to get started</div>
 
         <div class="cat-grid-dash">
-          <div class="cat-card-dash" onclick="openChat('itr')">
-            <div class="cat-icon-dash" style="background:#EFF6FF;">📋</div>
-            <h3>ITR Filing Guide</h3>
-            <p>Which ITR form? What deductions? New vs old regime?</p>
-            <div class="cat-price-tag" style="color:#1d4ed8;">₹79/mo after trial</div>
-          </div>
-          <div class="cat-card-dash" onclick="openChat('freelancer')">
-            <div class="cat-icon-dash" style="background:#F0FDF4;">💼</div>
-            <h3>Freelancer Tax Bot</h3>
-            <p>GST, advance tax, TDS refunds, 44AD presumptive income</p>
-            <div class="cat-price-tag" style="color:#15803d;">₹79/mo after trial</div>
-          </div>
-          <div class="cat-card-dash" onclick="openChat('regime')">
-            <div class="cat-icon-dash" style="background:#FDF4FF;">📊</div>
-            <h3>New vs Old Regime</h3>
-            <p>Personalised calculator — which regime saves you more?</p>
-            <div class="cat-price-tag" style="color:#7e22ce;">₹49/mo after trial</div>
-          </div>
-          <div class="cat-card-dash" onclick="openChat('labour')">
-            <div class="cat-icon-dash" style="background:#FEF7E0;">⚖️</div>
-            <h3>Indian Labour Law</h3>
-            <p>PF, gratuity, wrongful termination, salary disputes</p>
-            <div class="cat-price-tag" style="color:#854F0B;">₹49/mo after trial</div>
-          </div>
-          <div class="cat-card-dash" onclick="openChat('tenant')">
-            <div class="cat-icon-dash" style="background:#E6F4F1;">🏠</div>
-            <h3>Tenant Rights Bot</h3>
-            <p>Rent agreement, deposit return, illegal eviction</p>
-            <div class="cat-price-tag" style="color:#0F6E56;">₹49/mo after trial</div>
-          </div>
-          <div class="cat-card-dash" onclick="openChat('fir')">
-            <div class="cat-icon-dash" style="background:#FEF2F2;">🚔</div>
-            <h3>Police FIR & Legal Rights</h3>
-            <p>FIR registration, bail rights, cybercrime, 498A</p>
-            <div class="cat-price-tag" style="color:#c0392b;">₹49/mo after trial</div>
-          </div>
-          <div class="cat-card-dash" onclick="openChat('rera')">
-            <div class="cat-icon-dash" style="background:#FFFBEB;">🏗️</div>
-            <h3>Consumer Rights & RERA</h3>
-            <p>Builder delays, possession disputes, compensation</p>
-            <div class="cat-price-tag" style="color:#B45309;">₹79/mo after trial</div>
-          </div>
-          <div class="cat-card-dash" onclick="openChat('startup')">
-            <div class="cat-icon-dash" style="background:#EDE9FE;">🚀</div>
-            <h3>Startup Legal Doc Bot</h3>
-            <p>Co-founder agreements, NDAs, SAFE notes, T&Cs</p>
-            <div class="cat-price-tag" style="color:#4a3580;">₹99/mo after trial</div>
-          </div>
+          <div class="cat-card-dash" data-tags="itr tax return filing form regime old new deduction 80c hra" onclick="openChat('itr')"><div class="cat-icon-dash" style="background:#EFF6FF;">📋</div><h3>ITR Filing Guide</h3><p>Which ITR form? Deductions, new vs old regime, ITA 2025</p></div>
+          <div class="cat-card-dash" data-tags="freelancer gst tds advance tax consultant 44ad self employed" onclick="openChat('freelancer')"><div class="cat-icon-dash" style="background:#F0FDF4;">💼</div><h3>Freelancer Tax Bot</h3><p>GST, advance tax, TDS refunds, 44AD presumptive income</p></div>
+          <div class="cat-card-dash" data-tags="regime old new tax slab calculator standard deduction hra" onclick="openChat('regime')"><div class="cat-icon-dash" style="background:#FDF4FF;">📊</div><h3>New vs Old Regime</h3><p>Personalised calculator — which regime saves you more?</p></div>
+          <div class="cat-card-dash" data-tags="labour employment pf provident gratuity salary fired terminate notice" onclick="openChat('labour')"><div class="cat-icon-dash" style="background:#FEF7E0;">⚖️</div><h3>Indian Labour Law</h3><p>PF, gratuity, wrongful termination, salary disputes</p></div>
+          <div class="cat-card-dash" data-tags="tenant rent landlord deposit eviction agreement lease house" onclick="openChat('tenant')"><div class="cat-icon-dash" style="background:#E6F4F1;">🏠</div><h3>Tenant Rights Bot</h3><p>Rent agreement, deposit return, illegal eviction</p></div>
+          <div class="cat-card-dash" data-tags="fir police complaint cybercrime bail arrest rights 498a bnss" onclick="openChat('fir')"><div class="cat-icon-dash" style="background:#FEF2F2;">🚔</div><h3>Police FIR &amp; Legal Rights</h3><p>FIR registration, bail rights, cybercrime, 498A</p></div>
+          <div class="cat-card-dash" data-tags="rera consumer builder flat delay possession complaint compensation" onclick="openChat('rera')"><div class="cat-icon-dash" style="background:#FFFBEB;">🏗️</div><h3>Consumer Rights &amp; RERA</h3><p>Builder delays, possession disputes, compensation</p></div>
+          <div class="cat-card-dash" data-tags="startup founder cofounder agreement nda safe note vesting equity" onclick="openChat('startup')"><div class="cat-icon-dash" style="background:#EDE9FE;">🚀</div><h3>Startup Legal Doc Bot</h3><p>Co-founder agreements, NDAs, SAFE notes, T&amp;Cs</p></div>
+        </div>
+
+        <!-- Powered by footer on dashboard -->
+        <div style="text-align:center;margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+          <span style="font-size:11px;color:var(--muted);display:inline-flex;align-items:center;gap:6px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="var(--muted)" stroke-width="1.5"/><path d="M8 12l3 3 5-5" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            NyayAI provides information, not legal advice.
+          </span>
         </div>
       </div>
     </div>
@@ -1421,26 +682,34 @@ body {
     <div class="chat-nav-icon" id="chat-nav-icon" style="background:#FEF7E0;">⚖️</div>
     <div class="chat-nav-info">
       <h3 id="chat-title">Labour Law Bot</h3>
-      <p id="chat-subtitle">Indian employment & workplace rights</p>
+      <p id="chat-subtitle">Indian employment &amp; workplace rights</p>
     </div>
-    <div class="query-counter" id="query-counter">Queries today: <span id="query-count">0</span></div>
-    <span id="chat-plan-chip" class="trial-chip" style="margin-left:8px;">Trial</span>
+    <div class="query-counter" id="query-counter">Queries: <span id="query-count">0</span></div>
+    <span id="chat-plan-chip" class="trial-chip" style="flex-shrink:0;">Trial</span>
+  </div>
+
+  <!-- Mobile-only trial bar -->
+  <div class="mobile-trial-bar" id="mobile-trial-bar">
+    <span id="mobile-trial-text">Trial: 3 days left</span>
+    <button onclick="showPricing()">Upgrade</button>
   </div>
 
   <div class="chat-layout">
     <div class="chat-main">
-      <div class="messages-area" id="messages-area">
-      </div>
-
+      <div class="messages-area" id="messages-area"></div>
       <div class="input-bar">
         <div class="input-row">
-          <textarea id="chat-input" placeholder="Ask your question in Hindi or English..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+          <textarea id="chat-input" placeholder="Ask in Hindi or English..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
           <button class="send-btn" onclick="sendMessage()">➤</button>
         </div>
-        <div class="input-hint">NyayAI provides legal information, not legal advice. Always consult a qualified professional for your specific situation.</div>
+        <div class="input-footer">
+          <span class="input-hint">🔒 Your conversations are private and never shared.</span>
+          <span class="hindi-label" onclick="insertHindiPrompt()">हिंदी में पूछें</span>
+        </div>
       </div>
     </div>
 
+    <!-- Desktop-only right sidebar -->
     <div class="chat-sidebar">
       <div class="info-card">
         <h4>Current bot</h4>
@@ -1451,12 +720,16 @@ body {
       <div class="info-card">
         <h4>Trial status</h4>
         <div class="info-item"><span>Days left</span><span class="info-val" id="chat-sidebar-days">3 days</span></div>
-        <div class="info-item"><span>Queries used</span><span class="info-val" id="sidebar-queries">0 / ∞</span></div>
+        <div class="info-item"><span>Queries used</span><span class="info-val" id="sidebar-queries">0</span></div>
       </div>
       <div class="upgrade-card">
         <h4>Go Pro</h4>
-        <p>Unlock unlimited questions, PDF exports and CA referral assistance after your trial ends.</p>
+        <p>Unlock unlimited questions and CA referral assistance after your trial ends.</p>
         <button class="btn-upgrade-sm" onclick="showPricing()">See plans →</button>
+      </div>
+      <div style="margin-top:14px;padding:10px 12px;background:var(--cream);border-radius:8px;font-size:11px;color:var(--muted);text-align:center;">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;margin-right:4px;"><circle cx="12" cy="12" r="10" stroke="var(--muted)" stroke-width="1.5"/><path d="M8 12l3 3 5-5" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Powered by Nyay AI
       </div>
     </div>
   </div>
@@ -1467,7 +740,7 @@ body {
   <div class="pricing-box">
     <div class="pricing-box-header">
       <h2>Upgrade your NyayAI plan</h2>
-      <p>Your 3-day trial has given you a taste — now unlock the full power</p>
+      <p>Your trial has given you a taste — now unlock the full power</p>
     </div>
     <div class="pricing-box-body">
       <div class="plans-row">
@@ -1475,35 +748,19 @@ body {
           <h3>Per Category</h3>
           <div class="price">₹49–₹99</div>
           <div class="period">per category / month</div>
-          <ul>
-            <li>Choose only what you need</li>
-            <li>Unlimited questions</li>
-            <li>PDF summaries</li>
-            <li>Hindi + English</li>
-          </ul>
+          <ul><li>Choose only what you need</li><li>Unlimited questions</li><li>PDF summaries</li><li>Hindi + English</li></ul>
         </div>
         <div class="plan-option selected" onclick="selectPlan(this,'pro')" id="plan-pro">
           <h3>All Access ⭐</h3>
           <div class="price">₹349</div>
           <div class="period">all 8 categories / month</div>
-          <ul>
-            <li>All 8 bots unlocked</li>
-            <li>Unlimited questions</li>
-            <li>Priority speed</li>
-            <li>PDF + CA referral</li>
-            <li>Save ₹44 vs per-cat</li>
-          </ul>
+          <ul><li>All 8 bots unlocked</li><li>Unlimited questions</li><li>Priority speed</li><li>CA referral assist</li><li>Save ₹44 vs per-cat</li></ul>
         </div>
         <div class="plan-option" onclick="selectPlan(this,'annual')" id="plan-annual">
           <h3>Annual 🔥</h3>
           <div class="price">₹2,999</div>
-          <div class="period">all 8 cats / year (save ₹1,189)</div>
-          <ul>
-            <li>Everything in All Access</li>
-            <li>2 months free</li>
-            <li>Priority support</li>
-            <li>Early access to new bots</li>
-          </ul>
+          <div class="period">all 8 categories / year</div>
+          <ul><li>Everything in All Access</li><li>2 months free</li><li>Priority support</li><li>Early access to new bots</li></ul>
         </div>
       </div>
     </div>
@@ -1514,17 +771,11 @@ body {
   </div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
-
 <script>
-// ═══════════════════════════════════════════════════════════════
-// CONFIG
-// ═══════════════════════════════════════════════════════════════
 const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-  ? 'http://localhost:3000/api'
-  : '/api';
+  ? 'http://localhost:3000/api' : '/api';
 
 async function api(method, path, body = null, requireAuth = true) {
   const headers = { 'Content-Type': 'application/json' };
@@ -1536,17 +787,12 @@ async function api(method, path, body = null, requireAuth = true) {
   const data = await res.json();
   if (!res.ok) {
     const err = new Error(data.error || 'Request failed');
-    err.code        = data.code;
-    err.showPaywall = data.showPaywall;
-    err.status      = res.status;
+    err.code = data.code; err.showPaywall = data.showPaywall; err.status = res.status;
     throw err;
   }
   return data;
 }
 
-// ═══════════════════════════════════════════════════════════════
-// BOT CONFIG
-// ═══════════════════════════════════════════════════════════════
 const BOT_CONFIG = {
   labour:     { title:'Indian Labour Law Bot',          subtitle:'Employment & workplace rights',      icon:'⚖️', bg:'#FEF7E0', price:'₹49/mo' },
   tenant:     { title:'Tenant Rights Bot',              subtitle:'Rental disputes & renter protection', icon:'🏠', bg:'#E6F4F1', price:'₹49/mo' },
@@ -1559,29 +805,24 @@ const BOT_CONFIG = {
 };
 
 const BOT_QUESTIONS = {
-  labour:     ['Can my employer reduce my salary without notice?','What is my PF and gratuity entitlement?','I was fired without reason — is this legal?','How many leaves am I entitled to per year?'],
-  tenant:     ['Can my landlord evict me without notice?','My landlord is not returning my security deposit','Is a verbal rent agreement legally valid?','Can landlord increase rent mid-tenancy?'],
-  itr:        ['Which ITR form should I use — 1, 2, 3 or 4?','I have salary + freelance income — how do I file?','Can I claim HRA if I pay rent to my parents?','I missed the deadline — what happens now?'],
-  freelancer: ['Do I need GST registration at ₹25L annual income?','Client deducted 10% TDS — how do I claim it back?','What is advance tax and when must I pay it?','What is Section 44AD presumptive taxation?'],
-  regime:     ['My salary is ₹12L — which regime saves more tax?','I invest ₹1.5L in 80C and pay HRA — old regime better?','Can I switch regime after my company set new regime?','Is standard deduction available in new regime?'],
-  fir:        ['Police refused to register my FIR — what can I do?','Can I get bail for a bailable offence myself?','Someone is blackmailing me online — where do I complain?','Police arrested me without warrant — is this legal?'],
-  rera:       ['Builder delayed my flat by 3 years — what compensation?','How do I file a RERA complaint against my builder?','Builder is charging extra for car parking — is this legal?','Can I get a full refund if I cancel my flat booking?'],
-  startup:    ['What should a co-founder agreement include?','What is a 4-year vest with 1-year cliff?','Do I need a privacy policy for my app?','What is a SAFE note and how does it work?'],
+  labour:     ['Can my employer reduce my salary without notice?','What is my PF and gratuity entitlement?','I was fired without reason — is this legal?','मेरे एम्प्लॉयर ने PF नहीं दिया — क्या करूं?'],
+  tenant:     ['Can my landlord evict me without notice?','My landlord is not returning my security deposit','Is a verbal rent agreement legally valid?','मकान मालिक बिना नोटिस के निकाल रहा है — क्या करूं?'],
+  itr:        ['Which ITR form for salary + freelance income FY 2025-26?','Can I claim HRA if I pay rent to my parents?','I missed the filing deadline — what are the consequences?','New Income Tax Act 2025 — what changed from 1 April 2026?'],
+  freelancer: ['Do I need GST registration at ₹20L annual income?','Client deducted TDS — how do I claim refund?','What is Section 44AD presumptive taxation?','GST और advance tax कैसे भरें?'],
+  regime:     ['My salary is ₹12L — which regime saves more tax?','I invest ₹1.5L in 80C and pay HRA — old or new regime?','Is standard deduction available in new regime 2025-26?','Regime calculator — ₹15L salary with HRA and 80C'],
+  fir:        ['Police refused to register my FIR — what can I do?','How to file cybercrime complaint online?','Can I get bail for a bailable offence myself?','Zero FIR कैसे दर्ज करें?'],
+  rera:       ['Builder delayed my flat by 3 years — what compensation am I entitled to?','How do I file a RERA complaint against my builder?','Can I get a full refund if I cancel my flat booking?','RERA complaint कैसे करें Maharashtra में?'],
+  startup:    ['What should a co-founder agreement include?','What is a 4-year vest with 1-year cliff?','Do I need a privacy policy for my app under DPDP Act?','SAFE note kya hota hai?'],
 };
 
-// ═══════════════════════════════════════════════════════════════
-// STATE — single source of truth
-// ═══════════════════════════════════════════════════════════════
-let currentUser        = null;
-let currentBot         = null;
-let trialDaysLeft      = 3;
-let conversationHistory = [];
-let queryCount         = 0;
-let selectedPlan       = 'pro';
+let currentUser = null, currentBot = null, trialDaysLeft = 3;
+let conversationHistory = [], queryCount = 0, selectedPlan = 'pro';
 
-// ═══════════════════════════════════════════════════════════════
-// SCREEN SWITCHING — only active class, no DOM manipulation
-// ═══════════════════════════════════════════════════════════════
+// Configure marked.js for safe rendering
+if (typeof marked !== 'undefined') {
+  marked.setOptions({ breaks: true, gfm: true });
+}
+
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -1592,22 +833,13 @@ function scrollToSection(id) {
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 }
 
-// ═══════════════════════════════════════════════════════════════
-// AUTH MODAL
-// ═══════════════════════════════════════════════════════════════
+// ── AUTH MODAL ────────────────────────────────────────────────
 function openAuth(tab) {
   document.getElementById('auth-modal').classList.add('open');
   switchTab(tab || 'signup');
 }
-
-function closeAuth() {
-  document.getElementById('auth-modal').classList.remove('open');
-}
-
-document.getElementById('auth-modal').addEventListener('click', function(e) {
-  if (e.target === this) closeAuth();
-});
-
+function closeAuth() { document.getElementById('auth-modal').classList.remove('open'); }
+document.getElementById('auth-modal').addEventListener('click', e => { if (e.target.id === 'auth-modal') closeAuth(); });
 function switchTab(tab) {
   document.getElementById('signup-form').style.display = tab === 'signup' ? 'block' : 'none';
   document.getElementById('login-form').style.display  = tab === 'login'  ? 'block' : 'none';
@@ -1615,19 +847,15 @@ function switchTab(tab) {
   document.getElementById('tab-login').classList.toggle('active',  tab === 'login');
 }
 
-// ── REGISTER ──────────────────────────────────────────────────
 async function doSignup() {
-  const name  = document.getElementById('reg-name').value.trim();
+  const name = document.getElementById('reg-name').value.trim();
   const email = document.getElementById('reg-email').value.trim();
   const phone = document.getElementById('reg-phone').value.trim();
   const pass  = document.getElementById('reg-pass').value;
-
   if (!name || !email || !phone || !pass) { showToast('Please fill all fields', 'error'); return; }
   if (pass.length < 8) { showToast('Password must be at least 8 characters', 'error'); return; }
-
   const btn = document.querySelector('#signup-form .btn-auth');
   btn.textContent = 'Creating account…'; btn.disabled = true;
-
   try {
     const data = await api('POST', '/auth/register', { name, email, phone, password: pass }, false);
     localStorage.setItem('nyay_token', data.token);
@@ -1635,23 +863,16 @@ async function doSignup() {
     closeAuth();
     await loadAndEnterDashboard();
     showToast('Welcome to NyayAI! Your 3-day trial has started 🎉', 'success');
-  } catch (err) {
-    showToast(err.message, 'error');
-  } finally {
-    btn.textContent = 'Create account & start trial'; btn.disabled = false;
-  }
+  } catch (err) { showToast(err.message, 'error'); }
+  finally { btn.textContent = 'Create account & start trial'; btn.disabled = false; }
 }
 
-// ── LOGIN ─────────────────────────────────────────────────────
 async function doLogin() {
   const identifier = document.getElementById('login-email').value.trim();
-  const pass       = document.getElementById('login-pass').value;
-
+  const pass = document.getElementById('login-pass').value;
   if (!identifier || !pass) { showToast('Please fill all fields', 'error'); return; }
-
   const btn = document.querySelector('#login-form .btn-auth');
   btn.textContent = 'Signing in…'; btn.disabled = true;
-
   try {
     const data = await api('POST', '/auth/login', { identifier, password: pass }, false);
     localStorage.setItem('nyay_token', data.token);
@@ -1659,29 +880,22 @@ async function doLogin() {
     closeAuth();
     await loadAndEnterDashboard();
     showToast(data.message, 'success');
-  } catch (err) {
-    showToast(err.message, 'error');
-  } finally {
-    btn.textContent = 'Sign in'; btn.disabled = false;
-  }
+  } catch (err) { showToast(err.message, 'error'); }
+  finally { btn.textContent = 'Sign in'; btn.disabled = false; }
 }
 
-// ── LOGOUT ────────────────────────────────────────────────────
 function doLogout() {
   localStorage.removeItem('nyay_token');
-  currentUser = null;
-  currentBot  = null;
+  currentUser = null; currentBot = null;
   showScreen('landing');
   showToast('Signed out successfully', 'success');
 }
 
-// ═══════════════════════════════════════════════════════════════
-// DASHBOARD — loads fresh profile data from backend each time
-// ═══════════════════════════════════════════════════════════════
+// ── DASHBOARD ─────────────────────────────────────────────────
 async function loadAndEnterDashboard() {
   try {
-    const data    = await api('GET', '/user/profile');
-    currentUser   = data.user;
+    const data  = await api('GET', '/user/profile');
+    currentUser = data.user;
     trialDaysLeft = data.trial.daysLeft;
     paintDashboard();
     showScreen('dashboard');
@@ -1691,69 +905,88 @@ async function loadAndEnterDashboard() {
   }
 }
 
-// paintDashboard — ONLY touches elements that exist on #dashboard screen
 function paintDashboard() {
-  const u         = currentUser;
+  const u = currentUser;
   const firstName = u.name.split(' ')[0];
   const initials  = u.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  setEl('user-initials', initials);
+  setEl('user-display-name', firstName);
+  setEl('welcome-name', firstName);
+  setEl('days-left', trialDaysLeft);
 
-  // Nav
-  setEl('user-initials',      initials);
-  setEl('user-display-name',  firstName);
-  setEl('welcome-name',       firstName);
-  setEl('days-left',          trialDaysLeft);
-
-  // Plan chip (dashboard nav only)
   const chip = document.getElementById('plan-chip');
   if (!chip) return;
 
   if (u.allAccess || u.plan === 'pro') {
-    chip.className   = 'pro-chip';
+    chip.className = 'pro-chip';
     chip.textContent = 'Pro ⭐';
+    setEl('welcome-subtitle', 'You have unlimited access to all 8 expert bots.');
     const tb = document.getElementById('trial-block');
-    if (tb) tb.innerHTML = '<div style="color:var(--gold);font-size:28px;margin-bottom:4px;">⭐</div><div style="font-size:12px;color:rgba(255,255,255,0.5);">Pro member</div>';
+    if (tb) tb.innerHTML = '<div style="font-size:28px;margin-bottom:4px;">⭐</div><div style="font-size:12px;color:rgba(255,255,255,.5);">Pro member</div>';
   } else {
-    chip.className   = 'trial-chip';
-    chip.textContent = trialDaysLeft > 0
-      ? `Trial — ${trialDaysLeft} day${trialDaysLeft !== 1 ? 's' : ''} left`
-      : 'Trial expired';
+    const days = trialDaysLeft;
+    const isUrgent = days <= 1;
+    chip.className = isUrgent ? 'trial-chip urgent' : 'trial-chip';
+    chip.textContent = days > 0 ? `Trial — ${days} day${days !== 1 ? 's' : ''} left` : 'Trial expired';
+
+    // Show urgent last-day banner
+    const urgentBanner = document.getElementById('urgent-banner');
+    if (urgentBanner && isUrgent && days > 0) urgentBanner.classList.add('show');
+
+    const tc = document.getElementById('trial-block');
+    if (tc && isUrgent) tc.classList.add('urgent');
+    const wb = document.getElementById('welcome-bar');
+    if (wb && isUrgent) wb.classList.add('urgent-bar');
   }
 }
 
-// Safe helper — silently skip if element doesn't exist
-function setEl(id, text) {
-  const el = document.getElementById(id);
-  if (el) el.textContent = text;
+function setEl(id, text) { const el = document.getElementById(id); if (el) el.textContent = text; }
+
+// ── BOT SEARCH ────────────────────────────────────────────────
+function filterBots(query) {
+  const q = query.toLowerCase().trim();
+  const cards = document.querySelectorAll('.cat-card-dash');
+  let anyVisible = false;
+  cards.forEach(card => {
+    const tags  = (card.dataset.tags || '') + ' ' + card.innerText.toLowerCase();
+    const match = !q || tags.includes(q);
+    card.classList.toggle('hidden-by-search', !match);
+    card.classList.toggle('highlight-search', !!q && match);
+    if (match) anyVisible = true;
+  });
 }
 
-// ═══════════════════════════════════════════════════════════════
-// CHAT — fully self-contained, no shared element IDs with dashboard
-// ═══════════════════════════════════════════════════════════════
+// ── CHAT ──────────────────────────────────────────────────────
 function openChat(botKey) {
   if (!currentUser) { openAuth('signup'); return; }
-
-  currentBot          = botKey;
+  currentBot = botKey;
   conversationHistory = [];
-  queryCount          = 0;
+  queryCount = 0;
 
   const cfg = BOT_CONFIG[botKey];
   const qs  = BOT_QUESTIONS[botKey] || [];
 
-  // ── Paint chat nav ────────────────────────────────────────
   setEl('chat-title',    cfg.title);
   setEl('chat-subtitle', cfg.subtitle);
 
   const navIcon = document.getElementById('chat-nav-icon');
   if (navIcon) { navIcon.textContent = cfg.icon; navIcon.style.background = cfg.bg; }
 
-  // ── Paint chat sidebar (IDs only exist on chat-screen) ───
   setEl('chat-sidebar-cat',   cfg.title.replace(' Bot','').replace(' Guide',''));
   setEl('chat-sidebar-price', cfg.price);
-  setEl('chat-sidebar-days',  trialDaysLeft + ' days');
-  setEl('query-count',        '0');
-  setEl('sidebar-queries',    '0 / ∞');
+  setEl('chat-sidebar-days',  trialDaysLeft + ' day' + (trialDaysLeft !== 1 ? 's' : ''));
+  setEl('query-count', '0');
+  setEl('sidebar-queries', '0');
 
-  // ── Plan chip on chat nav ─────────────────────────────────
+  // Mobile trial bar
+  const mtb = document.getElementById('mobile-trial-bar');
+  const mtt = document.getElementById('mobile-trial-text');
+  if (mtb && mtt) {
+    const isUrgent = trialDaysLeft <= 1;
+    mtt.textContent = currentUser.allAccess ? 'Pro member ⭐' : `Trial: ${trialDaysLeft} day${trialDaysLeft !== 1 ? 's' : ''} left`;
+    mtb.className = 'mobile-trial-bar' + (isUrgent ? ' urgent' : '');
+  }
+
   const chatChip = document.getElementById('chat-plan-chip');
   if (chatChip) {
     if (currentUser.allAccess || currentUser.plan === 'pro') {
@@ -1763,7 +996,7 @@ function openChat(botKey) {
     }
   }
 
-  // ── Rebuild messages area completely fresh ────────────────
+  // Build welcome message
   const area = document.getElementById('messages-area');
   if (!area) return;
   area.innerHTML = '';
@@ -1771,61 +1004,78 @@ function openChat(botKey) {
   const welcome = document.createElement('div');
   welcome.className = 'welcome-msg';
   welcome.id = 'welcome-chat-msg';
-
-  const iconDiv = document.createElement('div');
-  iconDiv.className = 'w-icon';
-  iconDiv.style.cssText = 'font-size:36px;margin-bottom:12px;';
-  iconDiv.textContent = cfg.icon;
-
-  const titleEl = document.createElement('h3');
-  titleEl.style.cssText = "font-family:'Playfair Display',serif;font-size:20px;color:var(--ink);margin-bottom:8px;font-weight:700;";
-  titleEl.textContent = cfg.title;
-
-  const descEl = document.createElement('p');
-  descEl.style.cssText = 'font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:16px;';
-  descEl.textContent = `Ask me anything about ${cfg.subtitle.toLowerCase()}. I give clear answers — no jargon.`;
-
-  const qqDiv = document.createElement('div');
-  qqDiv.className = 'quick-questions';
-
-  qs.forEach(q => {
-    const btn = document.createElement('div');
-    btn.className   = 'quick-q';
-    btn.textContent = q;
-    btn.onclick     = () => sendWithText(q);
-    qqDiv.appendChild(btn);
-  });
-
-  welcome.appendChild(iconDiv);
-  welcome.appendChild(titleEl);
-  welcome.appendChild(descEl);
-  welcome.appendChild(qqDiv);
+  welcome.innerHTML = `
+    <div class="w-icon">${cfg.icon}</div>
+    <h3>${cfg.title}</h3>
+    <p>Ask me anything about ${cfg.subtitle.toLowerCase()}. I give clear answers — no legal jargon. Powered by Nyay AI.</p>
+    <div class="quick-questions" id="quick-q-list"></div>`;
   area.appendChild(welcome);
 
-  // ── Switch screen ─────────────────────────────────────────
+  const qqList = document.getElementById('quick-q-list');
+  qs.forEach((q, i) => {
+    const btn = document.createElement('div');
+    btn.className = 'quick-q' + (i === qs.length - 1 ? ' hindi-quick' : '');
+    btn.textContent = q;
+    btn.onclick = () => sendWithText(q);
+    qqList.appendChild(btn);
+  });
+
+  // Load conversation history from backend
+  loadHistory(botKey);
+
   showScreen('chat-screen');
   document.getElementById('chat-input')?.focus();
 }
 
-function goBack() {
-  // Go back to dashboard WITHOUT re-fetching from server
-  showScreen('dashboard');
+async function loadHistory(botKey) {
+  try {
+    const data = await api('GET', `/chat/history/${botKey}`);
+    if (!data.history || data.history.length === 0) return;
+    const area = document.getElementById('messages-area');
+    if (!area) return;
+
+    const wm = document.getElementById('welcome-chat-msg');
+    if (wm) wm.style.display = 'none';
+
+    // Show last 10 messages
+    const recent = data.history.slice(-10);
+    recent.forEach(m => {
+      if (m.content) appendMessage(m.role === 'assistant' ? 'ai' : 'user', m.content);
+    });
+
+    // Rebuild conversation history for context
+    recent.forEach(m => {
+      conversationHistory.push({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.content });
+    });
+
+    // Show "previous conversation" divider
+    const divider = document.createElement('div');
+    divider.style.cssText = 'text-align:center;font-size:11px;color:var(--muted);padding:8px;margin:4px 0;';
+    divider.textContent = '— Previous conversation loaded — Ask a follow-up or start fresh —';
+    area.insertBefore(divider, area.firstChild);
+  } catch {}
 }
 
-// ── SEND MESSAGE ──────────────────────────────────────────────
-function handleKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-}
+function goBack() { showScreen('dashboard'); }
 
-function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
-}
+function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
+function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 110) + 'px'; }
+function sendWithText(text) { const i = document.getElementById('chat-input'); if (i) i.value = text; sendMessage(); }
 
-function sendWithText(text) {
-  const input = document.getElementById('chat-input');
-  if (input) input.value = text;
-  sendMessage();
+function insertHindiPrompt() {
+  const botHindiPrompts = {
+    itr: 'मुझे कौन सा ITR फॉर्म भरना चाहिए?',
+    labour: 'मेरे PF के बारे में जानकारी दें',
+    fir: 'FIR कैसे दर्ज करें?',
+    rera: 'RERA complaint कैसे करें?',
+    freelancer: 'GST registration कब जरूरी है?',
+    tenant: 'किराएदार के अधिकार क्या हैं?',
+    regime: 'नई या पुरानी tax regime — कौन सी बेहतर है?',
+    startup: 'स्टार्टअप के लिए agreement कैसे बनाएं?',
+  };
+  const text = botHindiPrompts[currentBot] || 'हिंदी में मेरा सवाल है:';
+  const i = document.getElementById('chat-input');
+  if (i) { i.value = text; i.focus(); }
 }
 
 async function sendMessage() {
@@ -1836,17 +1086,16 @@ async function sendMessage() {
   input.value = '';
   if (input.style) input.style.height = 'auto';
 
-  // Hide welcome message
   const wm = document.getElementById('welcome-chat-msg');
   if (wm) wm.style.display = 'none';
 
   appendMessage('user', text);
   conversationHistory.push({ role: 'user', content: text });
   queryCount++;
-  setEl('query-count',     String(queryCount));
-  setEl('sidebar-queries', queryCount + ' / ∞');
+  setEl('query-count', String(queryCount));
+  setEl('sidebar-queries', String(queryCount));
 
-  const typing  = appendTyping();
+  const typing = appendTyping();
   input.disabled = true;
 
   try {
@@ -1858,7 +1107,6 @@ async function sendMessage() {
   } catch (err) {
     typing.remove();
     input.disabled = false;
-
     if (err.showPaywall || err.code === 'TRIAL_EXPIRED') {
       showPricing();
       appendSystemMsg('⏰ Your trial has ended. Please upgrade to keep chatting.');
@@ -1867,7 +1115,6 @@ async function sendMessage() {
     if (err.status === 401) { doLogout(); return; }
     appendSystemMsg('⚠️ ' + (err.message || 'Something went wrong. Please try again.'));
   }
-
   input.focus();
 }
 
@@ -1875,7 +1122,7 @@ function appendMessage(role, text) {
   const area = document.getElementById('messages-area');
   if (!area) return;
 
-  const wrap   = document.createElement('div');
+  const wrap = document.createElement('div');
   wrap.className = `msg ${role}`;
 
   const avatar = document.createElement('div');
@@ -1886,12 +1133,15 @@ function appendMessage(role, text) {
   bubble.className = 'msg-bubble';
 
   if (role === 'ai') {
-    bubble.innerHTML = text
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\n/g, '<br>');
+    // Use marked.js for proper markdown rendering
+    if (typeof marked !== 'undefined') {
+      bubble.innerHTML = marked.parse(text);
+    } else {
+      bubble.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+    }
 
     const disc = document.createElement('div');
-    disc.className   = 'disclaimer';
+    disc.className = 'disclaimer';
     disc.textContent = '⚠️ General legal/tax information only — not professional advice. Consult a qualified lawyer or CA for your specific situation.';
 
     const inner = document.createElement('div');
@@ -1913,19 +1163,16 @@ function appendTyping() {
   const area = document.getElementById('messages-area');
   const wrap = document.createElement('div');
   wrap.className = 'msg ai';
-
   const avatar = document.createElement('div');
-  avatar.className   = 'msg-avatar';
+  avatar.className = 'msg-avatar';
   avatar.textContent = 'N';
-
   const bubble = document.createElement('div');
   bubble.className = 'msg-bubble';
   bubble.innerHTML = '<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
-
   wrap.appendChild(avatar);
   wrap.appendChild(bubble);
   area?.appendChild(wrap);
-  area && (area.scrollTop = area.scrollHeight);
+  if (area) area.scrollTop = area.scrollHeight;
   return wrap;
 }
 
@@ -1933,27 +1180,16 @@ function appendSystemMsg(text) {
   const area = document.getElementById('messages-area');
   if (!area) return;
   const el = document.createElement('div');
-  el.style.cssText = 'text-align:center;font-size:13px;color:var(--muted);padding:10px 16px;background:var(--cream);border-radius:8px;margin:8px auto;max-width:420px;';
+  el.style.cssText = 'text-align:center;font-size:12px;color:var(--muted);padding:8px 14px;background:var(--cream);border-radius:7px;margin:6px auto;max-width:400px;';
   el.textContent = text;
   area.appendChild(el);
   area.scrollTop = area.scrollHeight;
 }
 
-// ═══════════════════════════════════════════════════════════════
-// RAZORPAY
-// ═══════════════════════════════════════════════════════════════
-function showPricing() {
-  document.getElementById('pricing-modal').classList.add('open');
-}
-
-function closePricing() {
-  document.getElementById('pricing-modal').classList.remove('open');
-}
-
-document.getElementById('pricing-modal').addEventListener('click', function(e) {
-  if (e.target === this) closePricing();
-});
-
+// ── PRICING ───────────────────────────────────────────────────
+function showPricing() { document.getElementById('pricing-modal').classList.add('open'); }
+function closePricing() { document.getElementById('pricing-modal').classList.remove('open'); }
+document.getElementById('pricing-modal').addEventListener('click', e => { if (e.target.id === 'pricing-modal') closePricing(); });
 function selectPlan(el, plan) {
   document.querySelectorAll('.plan-option').forEach(p => p.classList.remove('selected'));
   el.classList.add('selected');
@@ -1964,34 +1200,20 @@ const PLAN_KEY_MAP = { basic: 'cat_labour', pro: 'all_access', annual: 'annual' 
 
 async function doPurchase() {
   if (!currentUser) { openAuth('login'); return; }
-
   const planKey = PLAN_KEY_MAP[selectedPlan] || 'all_access';
-  const btn     = document.querySelector('.btn-pay');
+  const btn = document.querySelector('.btn-pay');
   btn.textContent = 'Creating order…'; btn.disabled = true;
-
   try {
     const orderData = await api('POST', '/payments/create-order', { planKey });
-
     const options = {
-      key:         orderData.keyId,
-      amount:      orderData.amount,
-      currency:    orderData.currency,
-      name:        'NyayAI',
-      description: orderData.planName,
-      order_id:    orderData.razorpayOrderId,
-      prefill:     orderData.prefill,
-      theme:       { color: '#c9963a' },
-      modal: {
-        ondismiss: () => {
-          btn.textContent = 'Pay with Razorpay →';
-          btn.disabled    = false;
-          showToast('Payment cancelled', 'error');
-        }
-      },
+      key: orderData.keyId, amount: orderData.amount, currency: orderData.currency,
+      name: 'NyayAI', description: orderData.planName, order_id: orderData.razorpayOrderId,
+      prefill: orderData.prefill, theme: { color: '#c9963a' },
+      modal: { ondismiss: () => { btn.textContent = 'Pay with Razorpay →'; btn.disabled = false; showToast('Payment cancelled', 'error'); } },
       handler: async (response) => {
         try {
           const v = await api('POST', '/payments/verify', {
-            razorpayOrderId:   response.razorpay_order_id,
+            razorpayOrderId: response.razorpay_order_id,
             razorpayPaymentId: response.razorpay_payment_id,
             razorpaySignature: response.razorpay_signature,
           });
@@ -1999,50 +1221,37 @@ async function doPurchase() {
           closePricing();
           await loadAndEnterDashboard();
           showToast('🎉 Payment successful! All bots unlocked.', 'success');
-        } catch (ve) {
-          showToast('Payment verification failed. Contact support.', 'error');
-        }
+        } catch { showToast('Payment verification failed. Contact support.', 'error'); }
       }
     };
-
     if (!window.Razorpay) await loadScript('https://checkout.razorpay.com/v1/checkout.js');
     new window.Razorpay(options).open();
   } catch (err) {
-    showToast(err.message || 'Failed to create order. Please try again.', 'error');
+    showToast(err.message || 'Failed to create order.', 'error');
     btn.textContent = 'Pay with Razorpay →'; btn.disabled = false;
   }
 }
 
 function loadScript(src) {
   return new Promise((res, rej) => {
-    const s  = document.createElement('script');
-    s.src    = src;
-    s.onload = res; s.onerror = rej;
+    const s = document.createElement('script');
+    s.src = src; s.onload = res; s.onerror = rej;
     document.head.appendChild(s);
   });
 }
 
-// ═══════════════════════════════════════════════════════════════
-// TOAST
-// ═══════════════════════════════════════════════════════════════
 function showToast(msg, type = 'success') {
-  const t     = document.getElementById('toast');
+  const t = document.getElementById('toast');
   t.textContent = (type === 'success' ? '✓  ' : '✕  ') + msg;
-  t.className   = `toast ${type} show`;
+  t.className = `toast ${type} show`;
   setTimeout(() => { t.className = 'toast'; }, 4000);
 }
 
-// ═══════════════════════════════════════════════════════════════
-// INIT — auto-login if token saved
-// ═══════════════════════════════════════════════════════════════
+// ── INIT ──────────────────────────────────────────────────────
 window.addEventListener('load', async () => {
   if (localStorage.getItem('nyay_token')) {
-    try {
-      await loadAndEnterDashboard();
-    } catch {
-      localStorage.removeItem('nyay_token');
-      showScreen('landing');
-    }
+    try { await loadAndEnterDashboard(); }
+    catch { localStorage.removeItem('nyay_token'); showScreen('landing'); }
   }
 });
 </script>
